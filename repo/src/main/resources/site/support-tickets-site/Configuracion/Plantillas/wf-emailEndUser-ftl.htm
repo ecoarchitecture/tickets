@@ -1,0 +1,116 @@
+<html>
+   <head>
+      <style type="text/css"><!--
+      body
+      {
+         font-family: Arial, sans-serif;
+         font-size: 14px;
+         color: #4c4c4c;
+      }
+      
+      a, a:visited
+      {
+         color: #0072cf;
+      }
+      --></style>
+   </head>
+   
+   <body bgcolor="#dddddd">
+      <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
+         <tr>
+            <td width="100%" align="center">
+               <table width="70%" cellpadding="0" cellspacing="0" bgcolor="white" style="background-color: white; border: 1px solid #aaaaaa;">
+                  <tr>
+                     <td width="100%">
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                           <tr>
+                              <td style="padding: 10px 30px 0px;">
+                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                       <td>
+                                          <table cellpadding="0" cellspacing="0" border="0">
+                                             <tr>
+                                                <td>
+                                                   <img src="http://40.76.50.208:8080/static/gp.jpg" alt="" width="144" height="67" border="0" style="padding-right: 20px;" />
+                                                </td>
+                                                <td>
+                                                   <div style="font-size: 22px; padding-bottom: 4px;">
+                                                      <#if (args.workflowTitle)??>
+                                                         <p>${args.workflowTitle}</p>
+                                                      <#else>
+                                                        Tickets de Soporte
+                                                      </#if>
+                                                   </div>
+                                                   <div style="font-size: 13px;">
+                                                      ${date?datetime?string.full}
+                                                   </div>
+                                                </td>
+                                             </tr>
+                                          </table>
+                                          <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
+                                             <p>Hola,</p>
+                                             
+                                             <#if (args.ticketText)??>
+                                              	<br>
+                                             	<p><b>${args.ticketText}</b></p>	
+                                             </#if>
+                                             	
+                                             <#if (args.ticketEquipment)??>
+                                             	<br>
+                                             	<p>
+                                             	<b>Equipo o Sistema:</b> ${args.ticketEquipment}
+                                             </#if>
+                                             
+                                             <#if (args.ticketModule)??>
+                                             	<br>
+                                             	<b>Modulo:</b> ${args.ticketModule}
+                                             </#if>
+                                             	
+                                             <#if (args.ticketDescription)??>
+                                             	<br>
+                                             	<b>Descripci&oacute;n:</b> ${args.ticketDescription}
+                                             </#if>
+                                             	
+                                             <#if (args.ticketDetail)??>
+                                             	<br>
+                                             	<b>Detalle:</b> ${args.ticketDetail}
+                                             	<br>
+                                             </#if>
+                                             
+                                             	</p>
+                                             	
+                                             <#if (args.ticketAnalysis)??>
+                                             	<br>
+                                             	<b>An&aacute;lisis:</b> ${args.ticketAnalysis}
+                                             	<br>
+                                             </#if>
+                                             
+                                             <#if (args.workflowActions)??>
+                                             	<br>
+                                             	<b>Acciones:</b> ${args.workflowActions}
+                                             	<br>
+                                             </#if>
+                                             
+                                             
+                                             <#if args.workflowTasks == true>
+	                                               <p>Haga clic en este enlace para cerrar el ticket:</p>
+	                                               <p><a href="${shareUrl}/page/my-tasks#filter=workflows|active">${shareUrl}/page/my-tasks#filter=workflows|active</a>
+                                             </#if>
+	                                             
+                                              <p>Saludos,<br />
+                                             Alfresco ${productName!""}</p>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </table>
+                              </td>
+                           </tr>
+                        </table>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>

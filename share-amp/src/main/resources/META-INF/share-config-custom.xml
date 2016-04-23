@@ -1,0 +1,769 @@
+<!-- Share configuration related to this particular Share module extension, such as:
+     - Doclib action config
+     - Form config
+     - Aspect and Type config
+
+    Note. Any configuration related to the whole Share.war webapp
+           (i.e. not specific to this share extension) should be
+            placed in the environment specific config:
+             alfresco/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml file
+     -->
+<alfresco-config>
+
+  <config replace="true" evaluator="string-compare" condition="AdvancedSearch">
+		<advanced-search>
+			<forms>
+				<form labelId="search.form.label.cm_content" descriptionId="search.form.desc.cm_content">cm:content
+				</form>
+				<form labelId="search.form.label.cm_folder" descriptionId="search.form.desc.cm_folder">cm:folder
+				</form>
+				<form label="Tickets de Soporte Técnico" description="Búsqueda de Tickets de Soporte Técnico">gp:typeSupportTicket
+				</form>
+			</forms>
+
+		</advanced-search>
+	</config>
+
+
+  
+
+
+  <config evaluator="model-type" condition="gp:typeSupportTicket">
+
+    <forms>
+
+      <form id="search">
+
+        <field-visibility>
+
+          <show id="gp:ticketFolio"/>
+          <show id="gp:ticketEquipment"/>
+          <show id="gp:ticketModule"/>
+          <show id="cm:title"/>
+          <show id="gp:ticketUser"/>
+          <show id="gp:ticketTechnician"/>
+          <!--  show id="gp:ticketPriority"/-->
+          <show id="bpm:workflowPriority"/>
+		 
+		 <show id="gp:ticketUnitCost"/>
+          <show id="gp:ticketStatus"/>
+          <show id="gp:ticketServiceRating"/>
+
+        </field-visibility>
+        <appearance>
+
+          <field id="gp:ticketFolio" label="Folio" mandatory="false">
+	        <control>
+	          <control-param name="forceEditable">true</control-param>
+	      	</control>
+          </field>
+
+          <field id="gp:ticketEquipment" label="Equipo o Sistema que presenta la falla" mandatory="false">
+          	<control template="/mx/com/gp/components/form/controls/select-equipo.ftl">
+			</control>
+          </field>
+
+          <field id="gp:ticketModule" label="Módulo que presenta el problema" mandatory="false">
+          	<control template="/mx/com/gp/components/form/controls/select-modulo.ftl">
+			</control>
+          </field>
+
+          <field id="cm:title" label="Descripción del problema" mandatory="false">
+          	<control template="/mx/com/gp/components/form/controls/select-detalle.ftl">
+			</control>
+          </field>
+
+          <field id="gp:ticketUser" label="Usuario" mandatory="false"/>
+          <field id="gp:ticketTechnician" label="Técnico encargado" mandatory="false"/>
+          <!--  field id="gp:ticketPriority" label="Prioridad" mandatory="false"/>-->
+          <field id="bpm:workflowPriority" label-id="workflow.field.priority" mandatory="false" >
+			 <control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+			 <control-param name="forceEditable">true</control-param>
+			</field>
+		
+			<field id="gp:ticketUnitCost" label="Unidad de Negocio" mandatory="false" >
+          </field>
+
+          <field id="gp:ticketStatus" label="Estado del Ticket" mandatory="false"/>
+          <field id="gp:ticketServiceRating" label="Calificación de la atención" mandatory="false"/>
+
+        </appearance>
+
+      </form>
+
+    </forms>
+
+  </config>
+
+  <config evaluator="node-type" condition="gp:typeSupportTicket">
+
+    <forms>
+
+      <form>
+
+        <field-visibility>
+
+          <show id="gp:ticketEquipment"/>
+          <show id="gp:ticketModule"/>
+          <show id="gp:ticketFolio"/>
+          <show id="cm:title"/>
+          <show id="cm:description"/>
+          <show id="gp:ticketUser"/>
+          <show id="gp:ticketTechnician"/>
+          <show id="gp:ticketAnalysis"/>
+          <show id="gp:ticketActions"/>
+
+          <show id="gp:ticketPriority"/>
+          <show id="gp:ticketUnitCost"/>  
+          
+
+          <show id="gp:ticketStatus"/>
+          <show id="gp:ticketServiceRating"/>
+          <show id="gp:ticketUserCloseComments"/>
+
+        </field-visibility>
+        <appearance>
+
+          <set id="tituloTicket" appearance="title" label="Ticket de Soporte"/>
+          <set id="descripcion" appearance="bordered-panel" label="Descripción del Ticket" parent="tituloTicket"/>
+
+	          <field id="gp:ticketFolio" label="Folio" mandatory="true" read-only="true" set="descripcion"/>
+	          <field id="gp:ticketEquipment" label="Equipo o Sistema que presenta la falla" mandatory="true" read-only="true" set="descripcion">
+	          </field>
+	          <field id="gp:ticketModule" label="Módulo que presenta el problema" mandatory="false" read-only="true" set="descripcion">
+	          </field>
+	          <field id="cm:title" label="Descripción del problema" mandatory="false" read-only="true" set="descripcion">
+	          </field>
+	          <field id="cm:description" label="Detalle del problema" mandatory="false" read-only="true" set="descripcion"/>
+	          <field id="gp:ticketUser" label="Usuario" mandatory="true" read-only="true" set="descripcion"/>
+
+	          <field id="gp:ticketPriority" label="Prioridad" mandatory="true" read-only="true" set="descripcion"/> 
+	          <field id="gp:ticketUnitCost" label="Unidad de Negocio" mandatory="true" read-only="true" set="descripcion"/>
+	          
+	          <field id="bpm:workflowPriority" label-id="workflow.field.priority" mandatory="true" read-only="true" set="descripcion">
+	          <control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+			</field>
+
+          <set id="proceso" appearance="bordered-panel" label="Procesamiento del Ticket" parent="tituloTicket"/>
+
+	          <field id="gp:ticketTechnician" label="Técnico encargado" mandatory="true" read-only="true" set="proceso"/>
+
+	          <field id="gp:ticketAnalysis" label="Análisis" mandatory="true" read-only="true" set="proceso">
+	          	<control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="style">width: 99%</control-param>
+	            </control>
+	          </field>
+
+	          <field id="gp:ticketActions" label="Acciones realizadas" mandatory="true" read-only="true" set="proceso">
+	          	<control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="style">width: 99%</control-param>
+	            </control>
+	          </field>
+
+	          <field id="gp:ticketStatus" label="Estado del Ticket" mandatory="true" read-only="true" set="proceso"/>
+	          <field id="gp:ticketServiceRating" label="Calificación de la atención" mandatory="true" read-only="true" set="proceso"/>
+	          <field id="gp:ticketUserCloseComments" label="Comentarios de cierre" mandatory="false" read-only="true" set="proceso">
+	          	<control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="style">width: 99%</control-param>
+	            </control>
+	          </field>
+
+        </appearance>
+
+      </form>
+
+    </forms>
+
+  </config>
+
+  <config evaluator="string-compare" condition="activiti$tickets">
+    <forms>
+      <form>
+        <field-visibility>
+          <show id="stwf:ticketEquipment"/>
+          <show id="stwf:ticketModule"/>
+          <show id="bpm:workflowDescription"/>
+          <show id="bpm:comment"/>
+          <!--  show id="stwf:ticketPriority"/>-->
+          <show id="bpm:workflowPriority"/>
+          <show id="stwf:ticketUnitCost"/>
+
+        </field-visibility>
+
+        <appearance>
+          <set id="titulo" appearance="title" label="Creación de Ticket de Soporte"/>
+          <set id="descripcion" appearance="fieldset" label="Descripción del Ticket" parent="titulo"/>
+
+          <field id="stwf:ticketEquipment" label="Equipo o Sistema en el que se presenta el problema" mandatory="true" set="descripcion">
+          	<control template="/mx/com/gp/components/form/controls/select-equipo.ftl">
+			</control>
+          </field>
+
+          <field id="stwf:ticketModule" label="Módulo en el que se presenta el problema" mandatory="false" set="descripcion">
+          	<control template="/mx/com/gp/components/form/controls/select-modulo.ftl">
+			</control>
+          </field>
+
+          <field id="bpm:workflowDescription" label="Breve descripción del problema" mandatory="false" set="descripcion">
+          	<control template="/mx/com/gp/components/form/controls/select-detalle.ftl">
+			</control>
+          </field>
+
+		  <field id="bpm:comment" label="Detalle del problema" mandatory="false" set="descripcion">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="style">width: 99%</control-param>
+            </control>
+          </field>
+
+          <!--  field id="stwf:ticketPriority" label="Prioridad" mandatory="true" set="descripcion">
+          </field>-->
+
+           <field id="bpm:workflowPriority" label-id="workflow.field.priority" mandatory="true" set="descripcion" >
+			<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+			</field>
+			
+			<field id="stwf:ticketUnitCost" label="Unidad de Negocio" mandatory="true" set="descripcion">
+          </field>
+
+        </appearance>
+      </form>
+    </forms>
+  </config>
+
+<config evaluator="task-type" condition="stwf:startSupportTicket">
+
+    <forms>
+      <form id="workflow-details">
+        <field-visibility>
+          <show id="stwf:ticketEquipment"/>
+          <show id="stwf:ticketModule"/>
+          <show id="bpm:workflowDescription"/>
+          <show id="bpm:comment"/>
+          <show id="bpm:workflowPriority"/>
+          <show id="stwf:ticketUnitCost"/>
+
+        </field-visibility>
+
+        <appearance>
+          <set id="titulo" appearance="title" label="Creación de Ticket de Soporte"/>
+          <set id="descripcion" appearance="fieldset" label="Descripción del Ticket" parent="titulo"/>
+
+          <field id="stwf:ticketEquipment" label="Equipo o Sistema en el que se presenta el problema" mandatory="true" set="descripcion">
+          	<control template="/mx/com/gp/components/form/controls/select-equipo.ftl">
+			</control>
+          </field>
+
+          <field id="stwf:ticketModule" label="Módulo en el que se presenta el problema" mandatory="false" set="descripcion">
+          	<control template="/mx/com/gp/components/form/controls/select-modulo.ftl">
+			</control>
+          </field>
+
+          <field id="bpm:workflowDescription" label="Breve descripción del problema" mandatory="false" set="descripcion">
+          	<control template="/mx/com/gp/components/form/controls/select-detalle.ftl">
+			</control>
+          </field>
+
+		  <field id="bpm:comment" label="Detalle del problemas" mandatory="false" set="descripcion">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="style">width: 99%</control-param>
+            </control>
+          </field>
+
+          <!--  field id="stwf:ticketPriority" label="Prioridad" mandatory="true" set="descripcion">
+          </field>-->
+
+           <field id="bpm:workflowPriority" label-id="workflow.field.priority" mandatory="true" set="descripcion" >
+			<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+			</field>
+			
+			
+			<field id="stwf:ticketUnitCost" label="Unidad de Negocio" mandatory="true" set="descripcion">
+          </field>
+			
+        </appearance>
+      </form>
+    </forms>
+  </config>
+
+
+
+
+ <config evaluator="task-type" condition="stwf:ITAnalyzesProblem">
+    <forms>
+      <form>
+        <field-visibility>
+          <show id="stwf:ticketFolio"/>
+          <show id="stwf:ticketPriority"/>
+          <show id="stwf:ticketEquipment"/>
+          <show id="stwf:ticketModule"/>
+          <show id="bpm:description"/>
+          <!--  show id="bpm:comment"/>-->
+          <show id="packageItems" />
+
+
+          <show id="stwf:ticketUserName"/>
+          <show id="stwf:ticketUserFirstName"/>
+          <show id="stwf:ticketUserLastName"/>
+          <show id="stwf:ticketUserEmail"/>
+          <show id="stwf:ticketUserTelephone"/>
+          <show id="stwf:ticketUserMobile"/>
+
+
+          <show id="stwf:ticketAnalysis"/>
+          <show id="stwf:analysisOutcome"/>
+
+
+        </field-visibility>
+
+        <appearance>
+          <set id="tituloAnalisis" appearance="title" label="Analisis del Ticket"/>
+          <set id="descAnalisis" appearance="fieldset" label="Descripción del Ticket" parent="tituloAnalisis"/>
+          <set id="userInfo" appearance="fieldset" label="Usuario" parent="tituloAnalisis" template="/org/alfresco/components/form/2-column-set.ftl" />
+           <set id="procAnalisis" appearance="panel" label="Procesamiento del Ticket" parent="tituloAnalisis"/>
+				<field id="stwf:ticketFolio" label="Folio del Ticket" read-only="true" set="descAnalisis">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+
+				<field id="stwf:ticketPriority" label="Prioridad" mandatory="true" read-only="true" set="descAnalisis">
+				</field>
+
+				<field id="stwf:ticketEquipment" label="Equipo en el que se presenta el problema" mandatory="true" read-only="true" set="descAnalisis">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="stwf:ticketModule" label="Modulo en el que se presenta el problema" mandatory="false" read-only="true" set="descAnalisis">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="bpm:description" label="Breve descripción del problema" mandatory="false" read-only="true" set="descAnalisis">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<!--  field id="bpm:comment" label="Detalle del problema" mandatory="false" read-only="true" set="descAnalisis">
+				<control template="/org/alfresco/components/form/controls/textarea.ftl">
+				<control-param name="style">width: 99%</control-param>
+				</control>
+				</field>-->
+
+				<field id="packageItems" set="descAnalisis" />
+
+				<field id="stwf:ticketUserName" label="Username" read-only="true" set="userInfo">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="stwf:ticketUserFirstName" label="Nombre" read-only="true" set="userInfo">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="stwf:ticketUserLastName" label="Apellidos" read-only="true" set="userInfo">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="stwf:ticketUserEmail" label="Email" read-only="true" set="userInfo">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="stwf:ticketUserTelephone" label="Telefono" read-only="true" set="userInfo">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="stwf:ticketUserMobile" label="Movil" read-only="true" set="userInfo">
+					<control template="/org/alfresco/components/form/controls/info.ftl" />
+				</field>
+				<field id="stwf:ticketAnalysis" label="Análisis" mandatory="true" set="procAnalisis">
+				<control template="/org/alfresco/components/form/controls/textarea.ftl">
+				<control-param name="style">width: 99%</control-param>
+				</control>
+				</field>
+				<field id="stwf:analysisOutcome" label-id="Resultado" set="procAnalisis">
+				<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl"/>
+				</field>
+
+        </appearance>
+      </form>
+    </forms>
+  </config>
+
+
+  <config evaluator="task-type" condition="stwf:ITSolvesProblem">
+  <forms>
+    <form>
+      <field-visibility>
+      <show id="stwf:ticketFolio"/>
+      <show id="stwf:ticketPriority"/>
+      <show id="stwf:ticketEquipment"/>
+      <show id="stwf:ticketModule"/>
+      <show id="bpm:description"/>
+      <show id="packageItems" />
+      <show id="stwf:ticketUserName"/>
+      <show id="stwf:ticketUserFirstName"/>
+      <show id="stwf:ticketUserLastName"/>
+      <show id="stwf:ticketUserEmail"/>
+      <show id="stwf:ticketUserTelephone"/>
+      <show id="stwf:ticketUserMobile"/>
+      <show id="stwf:ticketAnalysis"/>
+
+
+        <show id="stwf:ticketTechnician"/>
+        <show id="stwf:ticketActions"/>
+        <show id="stwf:solutionOutcome"/>
+
+      </field-visibility>
+
+      <appearance>
+        <set id="tituloSolucion" appearance="title" label="Solución del Ticket"/>
+        <set id="descSolucion" appearance="fieldset" label="Descripción del Ticket" parent="tituloSolucion"/>
+        <set id="userInfo" appearance="fieldset" label="Usuario" parent="tituloSolucion" template="/org/alfresco/components/form/2-column-set.ftl" />
+        <set id="procSolucion" appearance="fieldset" label="Procesamiento del Ticket" parent="tituloSolucion"/>
+        <set id="procTask" appearance="fieldset" label="Acciones" parent="tituloSolucion"/>
+
+
+          <field id="stwf:ticketFolio" label="Folio del Ticket" read-only="true" set="descSolucion">
+            <control template="/org/alfresco/components/form/controls/info.ftl" />
+          </field>
+
+          <field id="stwf:ticketEquipment" label="Equipo en el que se presenta el problema" mandatory="true" read-only="true" set="descSolucion">
+            <control template="/org/alfresco/components/form/controls/info.ftl" />
+          </field>
+
+<field id="stwf:ticketModule" label="Módulo en el que se presenta el problema" mandatory="false" read-only="true" set="descSolucion">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="bpm:description" label="Breve descripción del problema" mandatory="false" read-only="true" set="descSolucion">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+
+
+<field id="stwf:ticketUserName" label="Username" read-only="true" set="userInfo">
+  <control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserFirstName" label="Nombre" read-only="true" set="userInfo">
+  <control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserLastName" label="Apellidos" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserEmail" label="Email" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserTelephone" label="Teléfono" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserMobile" label="Movil" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketPriority" label="Prioridad" mandatory="true" read-only="true" set="descSolucion">
+</field>
+
+
+<field id="stwf:ticketAnalysis" label="Análisis" read-only="true" set="procSolucion">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketTechnician" label="Técnico a cargo" read-only="true" set="procSolucion">
+  <control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+
+<field id="stwf:ticketActions" label="Acciones" mandatory="true" set="procTask">
+<control template="/org/alfresco/components/form/controls/textarea.ftl">
+<control-param name="style">width: 99%</control-param>
+</control>
+</field>
+
+<field id="stwf:solutionOutcome" label-id="Completar" set="procTask">
+<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl"/>
+</field>
+          <field id="packageItems" set="descSolucion" />
+      </appearance>
+    </form>
+  </forms>
+</config>
+
+
+<config evaluator="task-type" condition="stwf:ITReSolvesProblem">
+  <forms>
+    <form>
+      <field-visibility>
+      <show id="stwf:ticketFolio"/>
+      <show id="stwf:ticketPriority"/>
+      <show id="stwf:ticketEquipment"/>
+      <show id="stwf:ticketModule"/>
+      <show id="bpm:description"/>
+      <show id="packageItems" />
+      <show id="stwf:ticketUserName"/>
+      <show id="stwf:ticketUserFirstName"/>
+      <show id="stwf:ticketUserLastName"/>
+      <show id="stwf:ticketUserEmail"/>
+      <show id="stwf:ticketUserTelephone"/>
+      <show id="stwf:ticketUserMobile"/>
+      <show id="stwf:ticketAnalysis"/>
+
+         <show id="stwf:ticketServiceRating"/>
+           <show id="stwf:ticketUserCloseComments"/>
+
+        <show id="stwf:ticketTechnician"/>
+        <show id="stwf:ticketActions"/>
+        <show id="stwf:solutionOutcome"/>
+
+      </field-visibility>
+
+      <appearance>
+        <set id="tituloSolucion" appearance="title" label="Solución del Ticket"/>
+        <set id="descSolucion" appearance="fieldset" label="Descripción del Ticket" parent="tituloSolucion"/>
+        <set id="userInfo" appearance="fieldset" label="Usuario" parent="tituloSolucion" template="/org/alfresco/components/form/2-column-set.ftl" />
+        <set id="procSolucion" appearance="fieldset" label="Procesamiento del Ticket" parent="tituloSolucion"/>
+        <set id="reprocSolucion" appearance="fieldset" label="Retrabajo del Ticket" parent="tituloSolucion"/>
+        <set id="procTask" appearance="fieldset" label="Acciones" parent="tituloSolucion"/>
+
+ 		<field id="stwf:ticketServiceRating" label="Calificación" mandatory="true" read-only="true" set="reprocSolucion">
+           </field>
+
+           <field id="stwf:ticketUserCloseComments" label="Comentarios" set="reprocSolucion">
+             <control template="/org/alfresco/components/form/controls/info.ftl" />
+           </field>
+
+
+          <field id="stwf:ticketFolio" label="Folio del Ticket" read-only="true" set="descSolucion">
+            <control template="/org/alfresco/components/form/controls/info.ftl" />
+          </field>
+
+          <field id="stwf:ticketEquipment" label="Equipo en el que se presenta el problema" mandatory="true" read-only="true" set="descSolucion">
+            <control template="/org/alfresco/components/form/controls/info.ftl" />
+          </field>
+
+<field id="stwf:ticketModule" label="Módulo en el que se presenta el problema" mandatory="false" read-only="true" set="descSolucion">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="bpm:description" label="Breve descripción del problema" mandatory="false" read-only="true" set="descSolucion">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+
+
+<field id="stwf:ticketUserName" label="Username" read-only="true" set="userInfo">
+  <control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserFirstName" label="Nombre" read-only="true" set="userInfo">
+  <control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserLastName" label="Apellidos" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserEmail" label="Email" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserTelephone" label="Teléfono" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketUserMobile" label="Movil" read-only="true" set="userInfo">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+
+
+<field id="stwf:ticketPriority" label="Prioridad" mandatory="true" read-only="true" set="descSolucion">
+</field>
+
+
+<field id="stwf:ticketAnalysis" label="Análisis" read-only="true" set="procSolucion">
+<control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+<field id="stwf:ticketTechnician" label="Técnico a cargo" read-only="true" set="procSolucion">
+  <control template="/org/alfresco/components/form/controls/info.ftl" />
+</field>
+
+
+<field id="stwf:ticketActions" label="Acciones" mandatory="true" set="procTask">
+<control template="/org/alfresco/components/form/controls/textarea.ftl">
+<control-param name="style">width: 99%</control-param>
+</control>
+</field>
+
+<field id="stwf:solutionOutcome" label-id="Completar" set="procTask">
+<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl"/>
+</field>
+          <field id="packageItems" set="descSolucion" />
+      </appearance>
+    </form>
+  </forms>
+</config>
+
+
+  <config evaluator="task-type" condition="stwf:userClosesTicket">
+   <forms>
+     <form>
+       <field-visibility>
+         <show id="stwf:ticketFolio"/>
+         <show id="stwf:ticketPriority"/>
+         <show id="stwf:ticketEquipment"/>
+         <show id="stwf:ticketModule"/>
+         <show id="bpm:description"/>
+         <show id="packageItems" />
+
+           <show id="stwf:ticketTechnician"/>
+           <show id="stwf:ticketActions"/>
+
+           <show id="stwf:ticketServiceRating"/>
+           <show id="stwf:ticketUserCloseComments"/>
+           <show id="stwf:closeTicketOutcome"/>
+
+
+       </field-visibility>
+
+       <appearance>
+        <set id="tituloCierre" appearance="title" label="Cierre del Ticket"/>
+        <set id="descCierre" appearance="fieldset" label="Descripción del Ticket" parent="tituloCierre"/>
+        <set id="procCierre" appearance="fieldset" label="Procesamiento del Ticket" parent="tituloCierre"/>
+        <set id="procTask" appearance="fieldset" label="Cierre" parent="tituloCierre"/>
+
+
+
+        <field id="stwf:ticketFolio" label="Folio del Ticket" read-only="true" set="descCierre">
+          <control template="/org/alfresco/components/form/controls/info.ftl" />
+        </field>
+
+        <field id="stwf:ticketEquipment" label="Equipo en el que se presenta el problema" mandatory="true" read-only="true" set="descCierre">
+          <control template="/org/alfresco/components/form/controls/info.ftl" />
+        </field>
+
+      <field id="stwf:ticketModule" label="Módulo en el que se presenta el problema" mandatory="false" read-only="true" set="descCierre">
+      <control template="/org/alfresco/components/form/controls/info.ftl" />
+      </field>
+
+      <field id="bpm:description" label="Breve descripción del problema" mandatory="false" read-only="true" set="descCierre">
+      <control template="/org/alfresco/components/form/controls/info.ftl" />
+      </field>
+
+
+      <field id="stwf:ticketPriority" label="Prioridad" mandatory="true" read-only="true" set="descCierre">
+      </field>
+
+
+
+
+           <field id="stwf:ticketTechnician" label="Técnico a cargo" read-only="true" set="procCierre">
+            <control template="/org/alfresco/components/form/controls/info.ftl" />
+           </field>
+
+           <field id="stwf:ticketActions" label="Acciones" read-only="true" set="procCierre">
+             <control template="/org/alfresco/components/form/controls/info.ftl" />
+           </field>
+
+
+
+           <field id="stwf:ticketServiceRating" label="Calificación" mandatory="true" set="procTask">
+           </field>
+
+           <field id="stwf:ticketUserCloseComments" label="Comentarios" set="procTask">
+             <control template="/org/alfresco/components/form/controls/textarea.ftl">
+               <control-param name="style">width: 99%</control-param>
+             </control>
+           </field>
+
+           <field id="stwf:closeTicketOutcome" label-id="Cerrar" set="procTask">
+             <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl"/>
+           </field>
+<field id="packageItems" set="descCierre" />
+
+       </appearance>
+     </form>
+   </forms>
+ </config>
+ 
+  <config evaluator="task-type" condition="stwf:userClosesTicketsss">
+    <forms>
+      <form>
+        <field-visibility>
+          <show id="stwf:ticketFolio"/>
+          <show id="bpm:description"/>
+          <show id="bpm:comment"/>
+          <show id="stwf:ticketEquipment"/>
+          <!--  show id="stwf:ticketPriority"/>-->
+          <show id="bpm:workflowPriority"/>
+
+          <show id="stwf:ticketTechnician"/>
+          <show id="stwf:ticketActions"/>
+          <show id="stwf:ticketServiceRating"/>
+          <show id="stwf:ticketUserCloseComments"/>
+          <show id="stwf:closeTicketOutcome"/>
+
+        </field-visibility>
+
+        <appearance>
+          <set id="tituloCierre" appearance="title" label="Cierre del Ticket"/>
+          <set id="descCierre" appearance="fieldset" label="Descripción del Ticket" parent="tituloCierre"/>
+
+	          <field id="stwf:ticketFolio" label="Folio del Ticket" read-only="true" set="descCierre">
+	          </field>
+
+	          <field id="stwf:ticketEquipment" label="Equipo en el que se presenta el problema" mandatory="true" read-only="true" set="descCierre">
+	          </field>
+
+	          <field id="stwf:ticketModule" label="Módulo en el que se presenta el problema" mandatory="false" read-only="true" set="descCierre">
+	          </field>
+
+	          <field id="bpm:description" label="Breve descripción del problema" mandatory="false" read-only="true" set="descCierre">
+	          </field>
+
+			  <field id="bpm:comment" label="Detalle del problema" mandatory="false" read-only="true" set="descCierre">
+	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="style">width: 99%</control-param>
+	            </control>
+	          </field>
+	          <!--  field id="stwf:ticketPriority" label="Prioridad" mandatory="true" read-only="true" set="descCierre">
+	          </field>-->
+
+	            <field id="bpm:workflowPriority" label-id="workflow.field.priority" mandatory="true" read-only="true" set="descCierre">
+				<control template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+			</field>
+
+	      <set id="procCierre" appearance="fieldset" label="Procesamiento del Ticket" parent="tituloCierre"/>
+
+	          <field id="stwf:ticketAnalysis" label="Análisis" read-only="true" set="procCierre">
+	          	<control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="style">width: 99%</control-param>
+	            </control>
+	          </field>
+
+	          <field id="stwf:ticketTechnician" label="Técnico a cargo" read-only="true" set="procCierre">
+	          </field>
+
+	          <field id="stwf:ticketActions" label="Acciones" read-only="true" set="procCierre">
+	          	<control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="style">width: 99%</control-param>
+	            </control>
+	          </field>
+
+	      <set id="procTask" appearance="fieldset" label="Cierre" parent="tituloCierre"/>
+
+	          <field id="stwf:ticketServiceRating" label="Calificación" mandatory="true" set="procTask">
+	          </field>
+
+	          <field id="stwf:ticketUserCloseComments" label="Comentarios" set="procTask">
+	          	<control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="style">width: 99%</control-param>
+	            </control>
+	          </field>
+
+	          <field id="stwf:closeTicketOutcome" label-id="Cerrar" set="procTask">
+	            <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl"/>
+	          </field>
+
+        </appearance>
+      </form>
+    </forms>
+  </config>
+
+
+
+
+
+</alfresco-config>

@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Webscript Get Modulos</shortname>
+  <description>Obtiene la lista de Modulos de fallas por Equipo o Sistema</description>
+  <url>/mx/com/gp/modulo</url>
+  <format default="json">argument</format>
+  <family>GP - Documentos</family>
+  <authentication runas="admin">guest</authentication>
+  <!--transaction>required</transaction-->
+</webscript>

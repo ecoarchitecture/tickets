@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Webscript Get Detalles</shortname>
+  <description>Obtiene la lista de Detalles de fallas por Modulo</description>
+  <url>/mx/com/gp/detalle</url>
+  <format default="json">argument</format>
+  <family>GP - Documentos</family>
+  <authentication runas="admin">guest</authentication>
+  <!--transaction>required</transaction-->
+</webscript>

@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Webscript Get Equipos</shortname>
+  <description>Obtiene la lista de equipos o sistemas que pueden generar un ticket</description>
+  <url>/mx/com/gp/equipo</url>
+  <format default="json">argument</format>
+  <family>GP - Documentos</family>
+  <authentication runas="admin">guest</authentication>
+  <!--transaction>required</transaction-->
+</webscript>

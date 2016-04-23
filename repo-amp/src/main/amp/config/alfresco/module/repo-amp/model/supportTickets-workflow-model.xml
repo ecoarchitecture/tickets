@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="stwf:workflowModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+    <!-- Optional meta-data about the model -->
+    <description>Workflow Model for Repo Extension X</description>
+    <author>My Name</author>
+    <version>1.0</version>
+
+    <imports>
+        <!-- Import Alfresco Dictionary Definitions -->
+        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+        <!-- Import Alfresco Content Domain Model Definitions -->
+        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+        <!-- Import Alfresco Workflow Model Definitions -->
+        <import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm"/>
+
+        <import uri="http://www.granporturaria.com.mx/model/content/1.0" prefix="gp"/>
+
+    </imports>
+
+    <!-- Custom namespace for your domain -->
+    <namespaces>
+        <namespace uri="http://www.granportuaria.com.mx/model/supportTicketsworkflow/1.0" prefix="stwf"/>
+    </namespaces>
+
+    <!-- ===============================================================================================================
+        Constraints, Types, and Aspects go here...
+    -->
+
+    <!-- ===================================================================================
+    		WF Types
+    	====================================================================================
+    -->
+
+    <types>
+
+    	<type name="stwf:startSupportTicket">
+	      <title>Iniciar Nuevo Ticket de Soporte</title>
+	      <parent>bpm:startTask</parent>
+	      <properties>
+
+	      </properties>
+
+	      <mandatory-aspects>
+	      	<aspect>stwf:startTicket</aspect>
+	      	<aspect>bpm:assignee</aspect>
+	      </mandatory-aspects>
+
+	    </type>
+
+	    <type name="stwf:ITAnalyzesProblem">
+	      <title>IT analiza el problema</title>
+	      <parent>bpm:activitiOutcomeTask</parent>
+	      <properties>
+
+	      	<property name="stwf:analysisOutcome">
+	          <type>d:text</type>
+	          <constraints>
+	            <constraint type="LIST" name="stwf:valsOutcomeAnalysis">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>OK</value>
+	                  <value>NO</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+	        </property>
+
+	      </properties>
+
+	      <mandatory-aspects>
+	      	<aspect>stwf:startTicket</aspect>
+	      </mandatory-aspects>
+
+	    </type>
+
+
+
+
+	    <type name="stwf:ITReSolvesProblem">
+	      <title>IT Retrabaja el problema</title>
+	      <parent>stwf:ITSolvesProblem</parent>
+	      <properties>
+
+
+
+	      </properties>
+
+	      <mandatory-aspects>
+	      </mandatory-aspects>
+
+	    </type>
+
+
+	    <type name="stwf:ITSolvesProblem">
+	      <title>IT resuelve el problema</title>
+	      <parent>stwf:ITAnalyzesProblem</parent>
+	      <properties>
+
+	      	<property name="stwf:ticketTechnician">
+		      <type>d:text</type>
+		    </property>
+
+	      	<property name="stwf:ticketActions">
+		      <type>d:text</type>
+		    </property>
+
+		    <property name="stwf:ticketCloseNotifications">
+		      <type>d:boolean</type>
+		      <default>true</default>
+		    </property>
+
+		    <property name="stwf:ticketCloseNotificationsCycle">
+		      <type>d:int</type>
+		      <default>2</default>
+		      <constraints>
+	            <constraint type="LIST" name="stwf:notificationsCycle">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>1</value>
+	                  <value>2</value>
+	                  <value>3</value>
+	                  <value>4</value>
+	                  <value>5</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+		    </property>
+
+	        <property name="stwf:solutionOutcome">
+	          <type>d:text</type>
+	          <constraints>
+	            <constraint type="LIST" name="stwf:valsOutcomeSolution">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>Resuelto</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+	        </property>
+
+	      </properties>
+
+	      <mandatory-aspects>
+	      </mandatory-aspects>
+
+	    </type>
+
+	    <type name="stwf:userClosesTicket">
+	      <title>Usuario Cierra el Ticket</title>
+	      <parent>stwf:ITSolvesProblem</parent>
+	      <properties>
+
+	      	<!--  property name="stwf:ticketServiceRating">
+		      <type>d:text</type>
+		      <constraints>
+		        <constraint ref="gp:valuesRating" />
+		      </constraints>
+		    </property>
+
+		    <property name="stwf:ticketUserCloseComments">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>-->
+
+	        <property name="stwf:closeTicketOutcome">
+	          <type>d:text</type>
+	          <constraints>
+	            <constraint type="LIST" name="stwf:valsCloseTicketOutcome">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>OK</value>
+	                  <value>NO</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+	        </property>
+
+	      </properties>
+
+	      <mandatory-aspects>
+	      </mandatory-aspects>
+
+	    </type>
+
+    </types>
+
+
+    <!-- ===================================================================================
+    		WF Aspects
+    	====================================================================================
+    -->
+
+    <aspects>
+
+    	<aspect name="stwf:startTicket">
+	      <title>Propiedades iniciales del ticket</title>
+	      <properties>
+
+	        <property name="stwf:ticketFolio">
+		      <type>d:text</type>
+		      <protected>true</protected>
+		      <mandatory>true</mandatory>
+		    </property>
+
+
+		    <property name="stwf:ticketUserName">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+		    <property name="stwf:ticketUserFirstName">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="stwf:ticketUserLastName">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="stwf:ticketUserEmail">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="stwf:ticketUserTelephone">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="stwf:ticketUserMobile">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+
+	      	<property name="stwf:ticketEquipment">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+		    <property name="stwf:ticketModule">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="stwf:ticketPriority">
+		      <type>d:text</type>
+		      <mandatory enforced="true">true</mandatory>
+		      <constraints>
+		        <constraint ref="gp:valuesPriority"/>
+		      </constraints>
+		    </property>
+
+		    <property name="stwf:ticketAnalysis">
+		      <type>d:text</type>
+		    </property>
+
+		    	<property name="stwf:ticketServiceRating">
+		      <type>d:text</type>
+		      <constraints>
+		        <constraint ref="gp:valuesRating" />
+		      </constraints>
+		    </property>
+		    
+		    
+		    
+		    	<property name="stwf:ticketUnitCost">
+		      <type>d:text</type>
+		      <constraints>
+		        <constraint ref="gp:valuesUnitCost" />
+		      </constraints>
+		    </property>
+
+		    <property name="stwf:ticketUserCloseComments">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+	      </properties>
+	    </aspect>
+
+    </aspects>
+
+</model>
