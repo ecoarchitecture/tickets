@@ -172,6 +172,47 @@ function updateAnalisisTask(stwf_analysisOutcome , stwf_ticketTechnician, stwf_t
 
 }
 
+function updatePendienteTask(stwf_ticketActions , stwf_ticketFolio, ticketDocument ){
+
+	logger.debug('Update task PENDIENTE..'+stwf_ticketActions);
+
+
+	var workingFolder = site.childByNamePath('Tickets/Current');
+	var doc = workingFolder.childByNamePath(stwf_ticketFolio );
+	doc.properties['gp:ticketStatus']					= "PENDIENTE_PROVEEDOR";
+	doc.properties['gp:ticketActions']			= stwf_ticketActions;
+	doc.save();
+
+	var ticketEquipment = doc.properties['gp:ticketEquipment'];
+	var ticketModule = doc.properties['gp:ticketModule'];
+	var ticketFolio = doc.properties['gp:ticketFolio'];
+	var ticketDescription =  doc.properties['cm:title'];
+	var ticketDetail = doc.properties['cm:description'];
+	var ticketUserName = doc.properties['gp:ticketUserName'];
+	var ticketUserFirstName = doc.properties['gp:ticketUserFirstName'];
+	var ticketUserLastName = doc.properties['gp:ticketUserLastName'];
+	var ticketUserEmail = doc.properties['gp:ticketUserEmail'];
+	var ticketUserTelephone =doc.properties['gp:ticketUserTelephone'];
+	var ticketUserMobile =doc.properties['gp:ticketUserMobile'];
+	var ticketPriority = doc.properties['gp:ticketPriority'];
+	var ticketAnalysis = doc.properties['gp:ticketAnalysis'];
+
+	//logger.debug("ticketDetail ->"+ticketDetail);
+	var content = createContentFileTicket(ticketEquipment,ticketModule,ticketFolio, ticketDescription, ticketDetail , ticketUserName, ticketUserFirstName ,ticketUserLastName, doc , stwf_ticketTechnician, stwf_ticketAnalysis, stwf_ticketActions);
+	//logger.debug("content->"+content);
+	doc.addAspect("cm:versionable");
+	var workingCopy = doc.checkout();
+	workingCopy.content = content;
+	doc = workingCopy.checkin();
+	//doc.content = content;
+	//workingCopy.content = content;
+	//doc = workingCopy.checkin("a history note", true);
+
+
+}
+
+
+
 /**
  *
  * @param stwf_ticketFolio

@@ -15,8 +15,7 @@ execution.setVariable('stwf_ticketUserMobile', person.properties.mobile);
 execution.setVariable('stwf_ticketUser', person);
 execution.setVariable('stwf_ticketFolio', '0');
 execution.setVariable('stwf_CloseTicketNotifications', 0);
-execution.setVariable('stwf_ReworkTicket', 0);
-]]></activiti:string>
+execution.setVariable('stwf_ReworkTicket', 0);]]></activiti:string>
         </activiti:field>
       </activiti:executionListener>
     </extensionElements>
@@ -150,9 +149,13 @@ if(dueDate != 'undefined'){
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[logger.debug('' + task.getVariable('stwf_ticketActions') );
+
+logger.debug('' + task.getVariable('stwf_solutionOutcome'));
+
 task.setVariable('bpm_comment' , task.getVariable('stwf_ticketActions'));
 task.setVariableLocal('bpm_comment' , task.getVariable('stwf_ticketActions'));
-execution.setVariable('stwf_ticketActions', task.getVariable('stwf_ticketActions'));]]></activiti:string>
+execution.setVariable('stwf_ticketActions', task.getVariable('stwf_ticketActions'));
+execution.setVariable('stwf_solutionOutcome' , task.getVariable('stwf_solutionOutcome'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -162,7 +165,7 @@ execution.setVariable('stwf_ticketActions', task.getVariable('stwf_ticketActions
     </sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow8" sourceRef="tareaNotificarTicketCancelado" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow9" sourceRef="tareaResolverTicketSoporte" targetRef="tareaResolucionTicket"></sequenceFlow>
+    <sequenceFlow id="flow9" sourceRef="tareaResolverTicketSoporte" targetRef="exclusivegateway3"></sequenceFlow>
     <serviceTask id="tareaResolucionTicket" name="Actualizar Ticket Resuelto" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
       <extensionElements>
         <activiti:field name="script">
@@ -310,8 +313,7 @@ if (typeof stwf_ticketUnitCost != 'undefined'){
 	var stwf_ticketGroup = "GROUP_SUPPORT_TICKETS_" + stwf_ticketUnitCost;
 	logger.log(' Grupo Asignacion : ' + stwf_ticketGroup);
 	execution.setVariable('stwf_ticketGroup' , stwf_ticketGroup);
-}
-]]></activiti:string>
+}]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -420,6 +422,55 @@ logger.error('Nuevo Ticket Notificado');]]></activiti:string>
       </extensionElements>
     </serviceTask>
     <sequenceFlow id="flow33" sourceRef="tareaNotificarResuelto" targetRef="tareaCierreTicket"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
+    <serviceTask id="taskActualizarTicketPendiente" name="Actualizar Ticket Pendiente" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/tickets.js">
+logger.log('Actualizando el ticket a pendiente');
+logger.log(" Tikect : " + stwf_ticketFolio);
+logger.log("Comments" + stwf_ticketActions);
+updatePendienteTask(stwf_ticketActions , stwf_ticketFolio,  bpm_package.children[0]  );]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow35" sourceRef="exclusivegateway3" targetRef="taskActualizarTicketPendiente">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${stwf_solutionOutcome == 'Pendiente'}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="taskNotificarTicketPendiente" name="Notificar Ticket Pendiente" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/utils.js">
+//var mail = actions.create("mail");
+//mail.execute(bpm_package);
+
+logger.debug(' Notificacion de ticket pendiente');
+logger.debug('stwf_ticketFolio'+ stwf_ticketFolio);
+
+
+sendMailToEndUser(bpm_package,
+'Ticket de Soporte Pendiente',
+'El ticket con folio '+stwf_ticketFolio + ', se encuentra Pendiente por Proveedor.',
+stwf_ticketFolio,
+null,
+stwf_ticketEquipment,
+stwf_ticketModule,
+bpm_workflowDescription,
+bpm_comment,
+null,
+bpm_workflowPriority,
+false,
+initiator.properties.email,
+'Ticket de Soporte Pendiente');
+logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow36" sourceRef="taskActualizarTicketPendiente" targetRef="taskNotificarTicketPendiente"></sequenceFlow>
+    <sequenceFlow id="flow37" sourceRef="taskNotificarTicketPendiente" targetRef="tareaResolverTicketSoporte"></sequenceFlow>
+    <sequenceFlow id="flow38" sourceRef="exclusivegateway3" targetRef="tareaResolucionTicket">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${stwf_solutionOutcome == 'Resuelto'}]]></conditionExpression>
+    </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_tickets">
     <bpmndi:BPMNPlane bpmnElement="tickets" id="BPMNPlane_tickets">
@@ -427,7 +478,7 @@ logger.error('Nuevo Ticket Notificado');]]></activiti:string>
         <omgdc:Bounds height="35.0" width="35.0" x="10.0" y="183.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="eventoFinal" id="BPMNShape_eventoFinal">
-        <omgdc:Bounds height="35.0" width="35.0" x="1633.0" y="270.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="1896.0" y="322.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaActualizarAnalisis" id="BPMNShape_tareaActualizarAnalisis">
         <omgdc:Bounds height="73.0" width="121.0" x="490.0" y="158.0"></omgdc:Bounds>
@@ -445,34 +496,34 @@ logger.error('Nuevo Ticket Notificado');]]></activiti:string>
         <omgdc:Bounds height="55.0" width="105.0" x="753.0" y="321.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaResolverTicketSoporte" id="BPMNShape_tareaResolverTicketSoporte">
-        <omgdc:Bounds height="65.0" width="111.0" x="910.0" y="161.0"></omgdc:Bounds>
+        <omgdc:Bounds height="65.0" width="111.0" x="897.0" y="161.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
         <omgdc:Bounds height="35.0" width="35.0" x="788.0" y="414.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaResolucionTicket" id="BPMNShape_tareaResolucionTicket">
-        <omgdc:Bounds height="68.0" width="127.0" x="1064.0" y="153.0"></omgdc:Bounds>
+        <omgdc:Bounds height="68.0" width="127.0" x="1278.0" y="165.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaCierreTicket" id="BPMNShape_tareaCierreTicket">
-        <omgdc:Bounds height="75.0" width="125.0" x="1265.0" y="142.0"></omgdc:Bounds>
+        <omgdc:Bounds height="75.0" width="125.0" x="1479.0" y="154.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="boundarytimer1" id="BPMNShape_boundarytimer1">
-        <omgdc:Bounds height="30.0" width="30.0" x="1375.0" y="212.0"></omgdc:Bounds>
+        <omgdc:Bounds height="30.0" width="30.0" x="1589.0" y="224.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaActualizaCierreTicket" id="BPMNShape_tareaActualizaCierreTicket">
-        <omgdc:Bounds height="74.0" width="127.0" x="1453.0" y="146.0"></omgdc:Bounds>
+        <omgdc:Bounds height="74.0" width="127.0" x="1667.0" y="158.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
-        <omgdc:Bounds height="40.0" width="40.0" x="1630.0" y="162.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="1890.0" y="178.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaRetrabajarTicket" id="BPMNShape_tareaRetrabajarTicket">
-        <omgdc:Bounds height="55.0" width="105.0" x="1349.0" y="3.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="1460.0" y="8.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaActualizarCierreAut" id="BPMNShape_tareaActualizarCierreAut">
-        <omgdc:Bounds height="55.0" width="105.0" x="1337.0" y="360.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="1552.0" y="376.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="terminateendevent1" id="BPMNShape_terminateendevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="1615.0" y="370.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="1780.0" y="386.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaNotificarNuevo" id="BPMNShape_tareaNotificarNuevo">
         <omgdc:Bounds height="55.0" width="105.0" x="240.0" y="349.0"></omgdc:Bounds>
@@ -481,7 +532,16 @@ logger.error('Nuevo Ticket Notificado');]]></activiti:string>
         <omgdc:Bounds height="55.0" width="105.0" x="641.0" y="70.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaNotificarResuelto" id="BPMNShape_tareaNotificarResuelto">
-        <omgdc:Bounds height="55.0" width="105.0" x="1170.0" y="316.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="1289.0" y="349.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
+        <omgdc:Bounds height="40.0" width="40.0" x="1113.0" y="173.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskActualizarTicketPendiente" id="BPMNShape_taskActualizarTicketPendiente">
+        <omgdc:Bounds height="55.0" width="105.0" x="1081.0" y="20.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskNotificarTicketPendiente" id="BPMNShape_taskNotificarTicketPendiente">
+        <omgdc:Bounds height="55.0" width="105.0" x="900.0" y="20.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
         <omgdi:waypoint x="185.0" y="233.0"></omgdi:waypoint>
@@ -497,46 +557,46 @@ logger.error('Nuevo Ticket Notificado');]]></activiti:string>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
         <omgdi:waypoint x="825.0" y="194.0"></omgdi:waypoint>
-        <omgdi:waypoint x="910.0" y="193.0"></omgdi:waypoint>
+        <omgdi:waypoint x="897.0" y="193.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
         <omgdi:waypoint x="805.0" y="376.0"></omgdi:waypoint>
         <omgdi:waypoint x="805.0" y="414.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
-        <omgdi:waypoint x="1021.0" y="193.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1064.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1008.0" y="193.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1113.0" y="193.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
-        <omgdi:waypoint x="1127.0" y="221.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1222.0" y="316.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1341.0" y="233.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1341.0" y="349.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
-        <omgdi:waypoint x="1390.0" y="179.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1453.0" y="183.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1604.0" y="191.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1667.0" y="195.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
-        <omgdi:waypoint x="1580.0" y="183.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1630.0" y="182.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1794.0" y="195.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1890.0" y="198.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
-        <omgdi:waypoint x="1650.0" y="202.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1649.0" y="254.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1650.0" y="270.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1910.0" y="218.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1913.0" y="322.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
-        <omgdi:waypoint x="1650.0" y="162.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1910.0" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1909.0" y="30.0"></omgdi:waypoint>
         <omgdi:waypoint x="1649.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1454.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1565.0" y="35.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
-        <omgdi:waypoint x="1349.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1127.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1127.0" y="153.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1460.0" y="35.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1341.0" y="35.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1341.0" y="165.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow26" id="BPMNEdge_flow26">
-        <omgdi:waypoint x="1442.0" y="387.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1615.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1657.0" y="403.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1780.0" y="403.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow27" id="BPMNEdge_flow27">
         <omgdi:waypoint x="45.0" y="200.0"></omgdi:waypoint>
@@ -551,16 +611,33 @@ logger.error('Nuevo Ticket Notificado');]]></activiti:string>
         <omgdi:waypoint x="360.0" y="233.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow31" id="BPMNEdge_flow31">
-        <omgdi:waypoint x="1390.0" y="242.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1389.0" y="360.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1604.0" y="254.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1604.0" y="376.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
         <omgdi:waypoint x="693.0" y="125.0"></omgdi:waypoint>
         <omgdi:waypoint x="805.0" y="174.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow33" id="BPMNEdge_flow33">
-        <omgdi:waypoint x="1222.0" y="316.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1327.0" y="217.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1394.0" y="376.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1541.0" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1541.0" y="229.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
+        <omgdi:waypoint x="1133.0" y="173.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1133.0" y="75.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow36" id="BPMNEdge_flow36">
+        <omgdi:waypoint x="1081.0" y="47.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1005.0" y="47.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow37" id="BPMNEdge_flow37">
+        <omgdi:waypoint x="952.0" y="75.0"></omgdi:waypoint>
+        <omgdi:waypoint x="952.0" y="161.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow38" id="BPMNEdge_flow38">
+        <omgdi:waypoint x="1153.0" y="193.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1278.0" y="199.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

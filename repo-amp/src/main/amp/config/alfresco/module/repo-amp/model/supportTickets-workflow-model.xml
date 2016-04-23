@@ -136,6 +136,7 @@
 	              <parameter name="allowedValues">
 	                <list>
 	                  <value>Resuelto</value>
+	                  <value>Pendiente</value>
 	                </list>
 	              </parameter>
 	            </constraint>

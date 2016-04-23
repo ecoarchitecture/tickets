@@ -220,7 +220,7 @@
 		              <value>CERRADO</value>
 		              <value>CERRADO-SIN-RETRO</value>
 		              <value>RE-TRABAJO</value>
-		              <value> </value>
+		              <value>PENDIENTE_PROVEEDOR</value>
 		            </list>
 		          </parameter>
 		        </constraint>
