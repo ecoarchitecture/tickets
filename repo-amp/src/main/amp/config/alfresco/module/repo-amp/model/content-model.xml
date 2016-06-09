@@ -56,6 +56,38 @@
 	      <title>Documento General Granportuaria</title>
 	      <parent>cm:content</parent>
 	    </type>
+	    
+	    
+	    
+	    <type name="gp:reporteISO9001">
+	    
+	    	<title> Reporte ISO 900 </title>
+	    	<parent>gp:doc</parent>
+	    	<properties>
+	    		
+	    	
+	    	
+	    		
+	    	<property name="gp:tipoReporte">
+		      <type>d:text</type>
+		      <mandatory enforced="false">true</mandatory>
+		      <index enabled="true">
+                 <atomic>true</atomic>
+                 <stored>false</stored>
+                 <tokenised>false</tokenised>
+              </index>
+		      <constraints>
+		        <constraint type="LIST" name="gp:valuesTipoReporte">
+		          <parameter name="allowedValues">
+		            <list>
+		              <value>ISO-9001 Reporte Tickets Soporte</value>
+		            </list>
+		          </parameter>
+		        </constraint>
+		      </constraints>
+		    </property>
+	    	</properties>
+	    </type>
 
 	    <type name="gp:typeSupportTicket">
 	      <title>Documento de Ticket de Soporte</title>
@@ -221,6 +253,7 @@
 		              <value>CERRADO-SIN-RETRO</value>
 		              <value>RE-TRABAJO</value>
 		              <value>PENDIENTE_PROVEEDOR</value>
+		              <value>CERRADO-POR-NO-ATENCION</value>
 		            </list>
 		          </parameter>
 		        </constraint>

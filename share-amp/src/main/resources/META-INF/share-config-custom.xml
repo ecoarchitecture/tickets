@@ -176,6 +176,55 @@
 
   </config>
 
+
+<config evaluator="string-compare" condition="activiti$reports">
+	<forms>
+		<form>
+			<field-visibility>
+				<show id="stwf:reportFechaInicio"></show>
+				<show id="stwf:reportFechaFin"></show>
+				<show id="stwf:tipoReporte"></show>
+				<show id="bpm:workflowDescription"></show>
+			</field-visibility>
+			<appearance>
+				<set id="titulo" appearance="title" label="Reporte ISO 9001"></set>
+				<set id="descripcion" appearance="fieldset" label="Datos de Reporte"></set>
+				
+				<field id="stwf:reportFechaInicio" label="Fecha Inicio" mandatory="true" set="descripcion"></field>
+				<field id="stwf:reportFechaFin" label="Fecha Fin" mandatory="true" set="descripcion"></field>
+				<field id="stwf:tipoReporte" label="Tipo de Reporte" mandatory="true" set="descripcion"></field>
+				<field id="bpm:workflowDescription" label="Descripción" mandatory="true" set="descripcion"></field>	
+			</appearance>
+		</form>
+	
+	</forms>
+</config>
+
+
+<config evaluator="task-type" condition="stwf:startReports">
+	<forms>
+		<form>
+			<field-visibility>
+				<show id="stwf:reportFechaInicio"></show>
+				<show id="stwf:reportFechaFin"></show>
+				<show id="stwf:tipoReporte"></show>
+				<show id="bpm:workflowDescription"></show>
+			</field-visibility>
+			<appearance>
+				<set id="titulo" appearance="title" label="Reporte ISO 9001"></set>
+				<set id="descripcion" appearance="fieldset" label="Datos de Reporte"></set>
+				
+				<field id="stwf:reportFechaInicio" label="Fecha Inicio" mandatory="true" set="descripcion"></field>
+				<field id="stwf:reportFechaFin" label="Fecha Fin" mandatory="true" set="descripcion"></field>
+				<field id="stwf:tipoReporte" label="Tipo de Reporte" mandatory="true" set="descripcion"></field>
+				<field id="bpm:workflowDescription" label="Descripcion" mandatory="true" set="descripcion"></field>	
+			</appearance>
+		</form>
+	
+	</forms>
+</config>
+
+
   <config evaluator="string-compare" condition="activiti$tickets">
     <forms>
       <form>

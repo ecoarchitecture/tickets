@@ -20,6 +20,19 @@
     
     <!-- A simple class that is initialized by Spring -->
     <bean id="mx.com.gp.exampleBean" class="mx.com.gp.demoamp.Demo" init-method="init" />
+    
+    
+    <bean id="reporteTicketsServiceImpl" class="mx.com.gp.service.impl.ReporteTicketsServiceImpl" >
+    <property name="serviceRegistry">
+          <ref bean="ServiceRegistry" />
+      </property>
+      
+      <property name="authenticationService">
+          <ref bean="AuthenticationService" />
+      </property>
+      
+      
+    </bean>
 
     <!-- A simple module component that will be executed once.
          Note. this module component will only be executed once, and then there will be an entry for it in the Repo.
@@ -34,6 +47,8 @@
         <property name="nodeService" ref="NodeService" />
         <property name="nodeLocatorService" ref="nodeLocatorService" />
     </bean>
+    
+    
 
     
 </beans>

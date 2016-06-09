@@ -64,20 +64,20 @@ function crearTicketSoporte(ticketEquipment,ticketModule,ticketDescription,ticke
 
 	var workingFolder = site.childByNamePath('Tickets/Current');
 	var folio = getNewFolio();
-	
+
 	var unitCost = "AT";
 	if(ticketUnitCost == 'MADRINAS'){
 		unitCost = "MA";
 	}
-	
+
 	var nameTicket = 'GP-' +unitCost+ '-' + folio;
 	var nameTicketPdf = nameTicket + '.pdf';
-	
+
 	var descPriority = setPriority(ticketPriority);
 	logger.debug('Prioridad :' + descPriority);
 	logger.debug('Unit Cost :'+ticketUnitCost);
 	var ticketOdt = workingFolder.createFile(nameTicket + '.odt');
-	
+
 	logger.debug(" Folio creado : " + nameTicket);
 	ticketOdt.name =nameTicket;
 	ticketOdt.specializeType('gp:typeSupportTicket');
@@ -96,8 +96,8 @@ function crearTicketSoporte(ticketEquipment,ticketModule,ticketDescription,ticke
 	ticketOdt.properties['gp:ticketUnitCost']			= ticketUnitCost;
 	ticketOdt.properties['gp:ticketStatus']				= "CREADO";
 	ticketOdt.properties['gp:ticketServiceRating']		= "Pendiente";
-	
-	
+
+
 
 
 	var content = createContentFileTicket(ticketEquipment,ticketModule,nameTicket, ticketDescription, ticketDetail , ticketUserName, ticketUserFirstName ,ticketUserLastName, ticketOdt , '', '', '');
@@ -327,40 +327,96 @@ function updateCierreTaskAut(stwf_ticketFolio ){
 
 
 	doc.properties['gp:ticketStatus']					= "CERRADO-SIN-RETRO";
-	doc.properties['gp:ticketServiceRating']			= "Excelente";
+	doc.properties['gp:ticketServiceRating']			= "Pendiente";
 	doc.properties['gp:ticketUserCloseComments']		= "Cerrado automáticamente por Alfresco ya que el usuario no cerró el ticket";
 
 	doc.save();
 
-	var ticketEquipment = doc.properties['gp:ticketEquipment'];
-	var ticketModule = doc.properties['gp:ticketModule'];
-	var ticketFolio = doc.properties['gp:ticketFolio'];
-	var ticketDescription =  doc.properties['cm:title'];
-	var ticketDetail = doc.properties['cm:description'];
-	var ticketUserName = doc.properties['gp:ticketUserName'];
-	var ticketUserFirstName = doc.properties['gp:ticketUserFirstName'];
-	var ticketUserLastName = doc.properties['gp:ticketUserLastName'];
-	var ticketUserEmail = doc.properties['gp:ticketUserEmail'];
-	var ticketUserTelephone =doc.properties['gp:ticketUserTelephone'];
-	var ticketUserMobile =doc.properties['gp:ticketUserMobile'];
-	var ticketPriority = doc.properties['gp:ticketPriority'];
-	var ticketAnalysis = doc.properties['gp:ticketAnalysis'];
-	var ticketActions = doc.properties['gp:ticketActions'];
+//	var ticketEquipment = doc.properties['gp:ticketEquipment'];
+//	var ticketModule = doc.properties['gp:ticketModule'];
+//	var ticketFolio = doc.properties['gp:ticketFolio'];
+//	var ticketDescription =  doc.properties['cm:title'];
+//	var ticketDetail = doc.properties['cm:description'];
+//	var ticketUserName = doc.properties['gp:ticketUserName'];
+//	var ticketUserFirstName = doc.properties['gp:ticketUserFirstName'];
+//	var ticketUserLastName = doc.properties['gp:ticketUserLastName'];
+//	var ticketUserEmail = doc.properties['gp:ticketUserEmail'];
+//	var ticketUserTelephone =doc.properties['gp:ticketUserTelephone'];
+//	var ticketUserMobile =doc.properties['gp:ticketUserMobile'];
+//	var ticketPriority = doc.properties['gp:ticketPriority'];
+//	var ticketAnalysis = doc.properties['gp:ticketAnalysis'];
+//	var ticketActions = doc.properties['gp:ticketActions'];
+//
+//
+//	//logger.debug("ticketDetail ->"+ticketDetail);
+//	var content = createContentFileTicket(ticketEquipment,ticketModule,ticketFolio, ticketDescription, ticketDetail , ticketUserName, ticketUserFirstName ,ticketUserLastName, doc , stwf_ticketTechnician, stwf_ticketAnalysis, stwf_ticketActions);
 
 
-	//logger.debug("ticketDetail ->"+ticketDetail);
-	var content = createContentFileTicket(ticketEquipment,ticketModule,ticketFolio, ticketDescription, ticketDetail , ticketUserName, ticketUserFirstName ,ticketUserLastName, doc , stwf_ticketTechnician, stwf_ticketAnalysis, stwf_ticketActions);
+logger.debug('Se creo el  documento del ticket ...');
 	//logger.debug("content->"+content);
-	doc.addAspect("cm:versionable");
-	var workingCopy = doc.checkout();
-	workingCopy.content = content;
-	doc = workingCopy.checkin();
+//	doc.addAspect("cm:versionable");
+//	var workingCopy = doc.checkout();
+//	workingCopy.content = content;
+//	doc = workingCopy.checkin();
 	//doc.content = content;
 	//workingCopy.content = content;
 	//doc = workingCopy.checkin("a history note", true);
 
 }
 
+
+function updateCierreNoAtencionTaskAut(stwf_ticketFolio ){
+	
+	
+	
+	
+	
+	logger.debug('Update task cierre por no atencion..'+stwf_ticketFolio);
+
+
+	var workingFolder = site.childByNamePath('Tickets/Current');
+	var doc = workingFolder.childByNamePath(stwf_ticketFolio );
+
+
+	doc.properties['gp:ticketStatus']					= "CERRADO-POR-NO-ATENCION";
+	doc.properties['gp:ticketServiceRating']			= "Pendiente";
+	doc.properties['gp:ticketUserCloseComments']		= "Cerrado automáticamente por Alfresco ya que No se atendio el Ticket";
+
+	doc.save();
+
+//	var ticketEquipment = doc.properties['gp:ticketEquipment'];
+//	var ticketModule = doc.properties['gp:ticketModule'];
+//	var ticketFolio = doc.properties['gp:ticketFolio'];
+//	var ticketDescription =  doc.properties['cm:title'];
+//	var ticketDetail = doc.properties['cm:description'];
+//	var ticketUserName = doc.properties['gp:ticketUserName'];
+//	var ticketUserFirstName = doc.properties['gp:ticketUserFirstName'];
+//	var ticketUserLastName = doc.properties['gp:ticketUserLastName'];
+//	var ticketUserEmail = doc.properties['gp:ticketUserEmail'];
+//	var ticketUserTelephone =doc.properties['gp:ticketUserTelephone'];
+//	var ticketUserMobile =doc.properties['gp:ticketUserMobile'];
+//	var ticketPriority = doc.properties['gp:ticketPriority'];
+//	var ticketAnalysis = doc.properties['gp:ticketAnalysis'];
+//	var ticketActions = doc.properties['gp:ticketActions'];
+//
+//
+//	//logger.debug("ticketDetail ->"+ticketDetail);
+//	var content = createContentFileTicket(ticketEquipment,ticketModule,ticketFolio, ticketDescription, ticketDetail , ticketUserName, ticketUserFirstName ,ticketUserLastName, doc , '', '', '');
+
+
+logger.debug('Se creo el  documento del ticket ...');
+	//logger.debug("content->"+content);
+//	doc.addAspect("cm:versionable");
+//	var workingCopy = doc.checkout();
+//	workingCopy.content = content;
+//	doc = workingCopy.checkin();
+	//doc.content = content;
+	//workingCopy.content = content;
+	//doc = workingCopy.checkin("a history note", true);
+	
+	logger.debug('Terminando de crear el doc y saliendo del metodo ...');
+
+}
 
 function setVencimientoTicket(ticketPriority){
 
@@ -400,7 +456,7 @@ function getNewFolio()
   var now = new Date();
   var folio = utils.pad(now.getFullYear(), 4) + '' +
     utils.pad((now.getMonth() + 1), 2) + '' +
-    utils.pad(now.getDate(), 2) + '' +
+    utils.pad(now.getDate(), 2) + '-' +
     utils.pad(now.getHours(), 2) + '' +
     utils.pad(now.getMinutes(), 2) + '' +
     utils.pad(now.getSeconds(), 2) + '' +

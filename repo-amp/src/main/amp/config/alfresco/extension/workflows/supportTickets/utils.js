@@ -375,23 +375,12 @@ function setDesPriority( bpm_workflowPriority ){
 
 function sendMailToGroup(wfPackage, mailTitle, wfDescription, wfPriority, groupName, subject, text, comments)
 {
-	var group = people.getGroup(groupName);
-	var groupMembers = group.getChildren();
 
-	for (var i = 0; i < groupMembers.length; i++)
-	{
-		var member = groupMembers[i];
-		var memberEmail = member.properties['cm:email'];
-		var memberUser = member.properties['cm:userName'];
 
-		log('Enviando notificación a: ' + memberUser + ' [' + memberEmail + ']');
+log('Enviando notificación a: [' + groupName + ']');
+sendMailToUser(wfPackage, true, mailTitle, wfDescription, wfPriority, groupName, subject, text, comments);
 
-		if (memberEmail != null || memberEmail != ''){
 
-			sendMailToUser(wfPackage, true, mailTitle, wfDescription, wfPriority, memberEmail, subject, text, comments);
-		}
-
-	}
 }
 
 function sendMailToUser(wfPackage, wfPooled, mailTitle, wfDescription, wfPriority, email, subject, text, comments)

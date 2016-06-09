@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.granportuaria.com.mx/reports">
+  <process id="reports" name="GP - Reporte Tickets" isExecutable="true">
+    <documentation>Proceso de Generación de Reportes ISO 9001</documentation>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <serviceTask id="taskNotificacionReporte" name="Notificación Reporte Creado" activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/utils.js">
+          	//var mail = actions.create("mail");
+//mail.execute(bpm_package);
+				logger.error('Notificar a Reporte Creada.');
+				
+
+				sendMailToEndUser(bpm_package,
+									'Reporte de Tickets de Soporte Creado',
+									'Se ha creado el Reporte de Tickets de Soporte.',
+									"",
+									"",
+									"",
+									"",
+									bpm_workflowDescription,
+									'',
+									null,
+									"",
+									false,
+									initiator.properties.email,
+									'Reporte Tickets Soporte');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow3" sourceRef="taskNotificacionReporte" targetRef="endevent1"></sequenceFlow>
+    <scriptTask id="taskCrearReporte" name="Crear Reporte" activiti:autoStoreVariables="false">
+      <extensionElements>
+        <activiti:executionListener event="start" class="mx.com.gp.service.impl.ReporteTicketsServiceImpl"></activiti:executionListener>
+      </extensionElements>
+      <script>logger.debug('BIgBang !');</script>
+    </scriptTask>
+    <sequenceFlow id="flow4" sourceRef="taskCrearReporte" targetRef="taskNotificacionReporte"></sequenceFlow>
+    <startEvent id="startevent1" name="Start" activiti:formKey="stwf:startReports"></startEvent>
+    <sequenceFlow id="flow5" sourceRef="startevent1" targetRef="taskCrearReporte">
+      <extensionElements>
+        <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[logger.log("Hello, " + stwf_tipoReporte + "!");]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_reports">
+    <bpmndi:BPMNPlane bpmnElement="reports" id="BPMNPlane_reports">
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="720.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskNotificacionReporte" id="BPMNShape_taskNotificacionReporte">
+        <omgdc:Bounds height="100.0" width="130.0" x="500.0" y="187.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskCrearReporte" id="BPMNShape_taskCrearReporte">
+        <omgdc:Bounds height="95.0" width="131.0" x="280.0" y="190.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="130.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="630.0" y="237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="720.0" y="237.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="411.0" y="237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="500.0" y="237.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="165.0" y="237.0"></omgdi:waypoint>
+        <omgdi:waypoint x="280.0" y="237.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

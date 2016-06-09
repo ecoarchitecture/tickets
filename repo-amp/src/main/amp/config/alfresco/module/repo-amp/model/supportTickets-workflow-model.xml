@@ -187,6 +187,38 @@
 	      </mandatory-aspects>
 
 	    </type>
+	    
+	    <type name="stwf:startReports">
+	    	<title> Generar Reporte ISO 9001</title>
+	    	<parent>bpm:startTask</parent>
+	    	<properties>
+	    	
+	    	<property name="stwf:reportFechaInicio">
+	    		<type>d:date</type>
+	    		<mandatory>true</mandatory>
+	    	</property>
+	    	
+	    	<property name="stwf:reportFechaFin">
+	    		<type>d:date</type>
+	    		<mandatory>true</mandatory>
+	    	</property>
+	    	
+	    	<property name="stwf:tipoReporte">
+		      <type>d:text</type>
+		      <mandatory enforced="false">true</mandatory>
+		      
+		      <constraints>
+		        <constraint type="LIST" name="stwf:valuesTipoReporte">
+		          <parameter name="allowedValues">
+		            <list>
+		              <value>ISO-9001 Reporte Tickets Soporte</value>
+		            </list>
+		          </parameter>
+		        </constraint>
+		      </constraints>
+		    </property>
+	    	</properties>
+	    </type>
 
     </types>
 

@@ -54,7 +54,7 @@ updateAnalisisTask(stwf_analysisOutcome , stwf_ticketTechnician, stwf_ticketFoli
       <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[logger.debug('Pasando sss ...');]]></activiti:string>
+            <activiti:string><![CDATA[logger.debug('Pasando sss ...'+ stwf_overDueDate);]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -208,24 +208,8 @@ task.setVariableLocal('bpm_comment', task.getVariable('stwf_ticketUserCloseComme
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow10" sourceRef="tareaResolucionTicket" targetRef="tareaNotificarResuelto"></sequenceFlow>
-    <serviceTask id="tareaActualizaCierreTicket" name="Actualizar Cierre Ticket" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
-      <extensionElements>
-        <activiti:field name="script">
-          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/tickets.js">
-logger.log("stwf_ticketServiceRating : " +  stwf_ticketServiceRating);
-logger.log(" stwf_ticketUserCloseComments : " + stwf_ticketUserCloseComments);
-logger.log("stwf_closeTicketOutcome " + stwf_closeTicketOutcome);
-updateCierreTask(stwf_ticketFolio, stwf_ticketServiceRating, stwf_ticketUserCloseComments, stwf_closeTicketOutcome  );]]></activiti:string>
-        </activiti:field>
-        <activiti:field name="runAs">
-          <activiti:string><![CDATA[admin]]></activiti:string>
-        </activiti:field>
-      </extensionElements>
-    </serviceTask>
-    <sequenceFlow id="flow11" sourceRef="tareaCierreTicket" targetRef="tareaActualizaCierreTicket"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow12" sourceRef="tareaActualizaCierreTicket" targetRef="exclusivegateway2"></sequenceFlow>
-    <sequenceFlow id="flow13" sourceRef="exclusivegateway2" targetRef="eventoFinal">
+    <sequenceFlow id="flow13" sourceRef="exclusivegateway2" targetRef="notificarCierreTicket">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${stwf_closeTicketOutcome == 'OK'}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="tareaRetrabajarTicket" name="IT Retrabaja Ticket" activiti:assignee="${stwf_ticketTechnician}" activiti:formKey="stwf:ITReSolvesProblem">
@@ -268,7 +252,7 @@ logger.debug("stwf_ReworkTicket-->" + execution.getVariable('stwf_ReworkTicket')
     </sequenceFlow>
     <boundaryEvent id="boundarytimer1" name="Timer" attachedToRef="tareaCierreTicket" cancelActivity="true">
       <timerEventDefinition>
-        <timeCycle>R2/PT600S</timeCycle>
+        <timeCycle>R2/PT150S</timeCycle>
       </timerEventDefinition>
     </boundaryEvent>
     <serviceTask id="tareaActualizarCierreAut" name="Actualizar Cierre Automatico Ticket" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
@@ -285,10 +269,6 @@ updateCierreTaskAut(stwf_ticketFolio);]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
-    <sequenceFlow id="flow26" sourceRef="tareaActualizarCierreAut" targetRef="terminateendevent1"></sequenceFlow>
-    <endEvent id="terminateendevent1" name="End">
-      <terminateEventDefinition></terminateEventDefinition>
-    </endEvent>
     <sequenceFlow id="flow27" sourceRef="eventoDeInicio" targetRef="tareaCrearTicketSoporte">
       <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
@@ -296,22 +276,41 @@ updateCierreTaskAut(stwf_ticketFolio);]]></activiti:string>
             <activiti:string><![CDATA[logger.log("Hello, " + bpm_workflowPriority + "!");
 logger.log('stwf:ticketEquipment' + stwf_ticketEquipment);
 logger.log('stwf:ticketUnitCost-' + stwf_ticketUnitCost);
+
+var overDueDate = new java.util.Date();
+
+
 var futureDate = new java.util.Date();
 if(bpm_workflowPriority == 1){
 	futureDate.setDate(futureDate.getDate() + 1);
+	overDueDate.setDate(futureDate.getDate() +1);
+
 }else if (bpm_workflowPriority == 2){
 	futureDate.setDate(futureDate.getDate() + 3);
+  overDueDate.setDate(futureDate.getDate()+1);
 }else{
 	futureDate.setDate(futureDate.getDate() + 4);
+  overDueDate.setDate(futureDate.getDate()+1);
 }
 execution.setVariable('bpm_workflowDueDate', futureDate );
+execution.setVariable('stwf_overDueDate', overDueDate );
 
+logger.debug('overDueDate !!' + execution.getVariable('stwf_overDueDate'));
 
 if (typeof stwf_ticketUnitCost != 'undefined'){
 
 	execution.setVariable('stwf_ticketUnitCost' , stwf_ticketUnitCost);
 	var stwf_ticketGroup = "GROUP_SUPPORT_TICKETS_" + stwf_ticketUnitCost;
 	logger.log(' Grupo Asignacion : ' + stwf_ticketGroup);
+
+//var stwf_ticketGroupEmail = "soporte.madrinas@granportuaria.com.mx";
+var stwf_ticketGroupEmail = "lucio.duran.silva@iikt.com.mx";
+if(stwf_ticketUnitCost != 'MADRINAS'){
+  //stwf_ticketGroupEmail = "soportegp@granportuaria.com.mx";
+  stwf_ticketGroupEmail = "demo@iikt.com.mx";
+}
+
+  execution.setVariable('stwf_ticketGroupEmail' , stwf_ticketGroupEmail);
 	execution.setVariable('stwf_ticketGroup' , stwf_ticketGroup);
 }]]></activiti:string>
           </activiti:field>
@@ -333,7 +332,7 @@ sendMailToGroup(bpm_package,
 'El usuario '+stwf_ticketUserName+' a generado un nuevo ticket de soporte con folio :'+ stwf_ticketFolio,
 bpm_workflowDescription,
 bpm_workflowPriority,
-stwf_ticketGroup,
+stwf_ticketGroupEmail,
 'Nuevo Ticket de Soporte - '+stwf_ticketFolio,
 'text',
 'comments');
@@ -361,7 +360,6 @@ logger.error('Nuevo Ticket Notificado');]]></activiti:string>
       </extensionElements>
     </serviceTask>
     <sequenceFlow id="flow30" sourceRef="tareaNotificarNuevo" targetRef="taskAnalizarTicketSupport"></sequenceFlow>
-    <sequenceFlow id="flow31" sourceRef="boundarytimer1" targetRef="tareaActualizarCierreAut"></sequenceFlow>
     <serviceTask id="tareaNotificarEnProceso" name="Nitificar En Proceso Ticket " activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
       <extensionElements>
         <activiti:field name="script">
@@ -471,6 +469,118 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
     <sequenceFlow id="flow38" sourceRef="exclusivegateway3" targetRef="tareaResolucionTicket">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${stwf_solutionOutcome == 'Resuelto'}]]></conditionExpression>
     </sequenceFlow>
+    <serviceTask id="notificarCierreTicket" name="Notificar Cierre Ticket" activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/utils.js">
+              //var mail = actions.create("mail");
+    //mail.execute(bpm_package);
+        logger.error('Notificar Ticket Cierre Aut.');
+
+        sendMailToEndUser(bpm_package,
+                  'Ticket de Soporte Cerrado',
+                  'El ticket con folio '+stwf_ticketFolio+' ha sido cerrado.',
+                  stwf_ticketFolio,
+                  null,
+                  stwf_ticketEquipment,
+                  stwf_ticketModule,
+                  bpm_workflowDescription,
+                  bpm_comment,
+                  stwf_ticketActions,
+                  bpm_workflowPriority,
+                  true,
+                  stwf_ticketGroupEmail,
+                  'Ticket de Soporte Cerrado');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow39" sourceRef="notificarCierreTicket" targetRef="eventoFinal"></sequenceFlow>
+    <serviceTask id="notificarCierreAutTicket" name="Notificar Cierre Aut. Ticket" activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/utils.js">
+              //var mail = actions.create("mail");
+    //mail.execute(bpm_package);
+        logger.error('Notificar Ticket Cierre Aut.');
+
+        sendMailToEndUser(bpm_package,
+                  'Ticket de Soporte Cerrado',
+                  'El ticket con folio '+stwf_ticketFolio+' se ha cerrado automáticamente.',
+                  stwf_ticketFolio,
+                  null,
+                  stwf_ticketEquipment,
+                  stwf_ticketModule,
+                  bpm_workflowDescription,
+                  bpm_comment,
+                  stwf_ticketActions,
+                  bpm_workflowPriority,
+                  true,
+                  stwf_ticketGroupEmail,
+                  'Ticket de Soporte Cerrado Aut.');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <boundaryEvent id="boundarytimer2" name="Timer" attachedToRef="taskAnalizarTicketSupport" cancelActivity="true">
+      <timerEventDefinition>
+        <timeDate>${stwf_overDueDate}</timeDate>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="flow41" sourceRef="boundarytimer2" targetRef="taskNotificarCierrePorNoAtencion"></sequenceFlow>
+    <serviceTask id="taskNotificarCierrePorNoAtencion" name="Notificar Cierre Ticket" activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/utils.js">
+              //var mail = actions.create("mail");
+    //mail.execute(bpm_package);
+        logger.error('Notificar Ticket Cierre Por No Atencion');
+
+        sendMailToEndUser(bpm_package,
+                  'Ticket de Soporte Cerrado',
+                  'El ticket con folio '+stwf_ticketFolio+' ha sido cerrado por no atención.',
+                  stwf_ticketFolio,
+                  null,
+                  stwf_ticketEquipment,
+                  stwf_ticketModule,
+                  bpm_workflowDescription,
+                  bpm_comment,
+                  'Cerrado Por No Atención',
+                  bpm_workflowPriority,
+                  true,
+                  stwf_ticketGroupEmail,
+                  'Ticket de Soporte Cerrado');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow43" sourceRef="taskNotificarCierrePorNoAtencion" targetRef="taskActualizarTicketPorNoAtencion"></sequenceFlow>
+    <endEvent id="endevent2" name="End"></endEvent>
+    <sequenceFlow id="flow44" sourceRef="taskActualizarTicketPorNoAtencion" targetRef="endevent2"></sequenceFlow>
+    <serviceTask id="taskActualizarTicketPorNoAtencion" name="Actualizar Cierre Por No Atención" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/tickets.js">
+logger.debug("Cerrado automatico por no atencion !");
+logger.log("stwf_ticketFolio : " +  stwf_ticketFolio);
+
+updateCierreNoAtencionTaskAut(stwf_ticketFolio);]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow45" sourceRef="boundarytimer1" targetRef="notificarCierreAutTicket"></sequenceFlow>
+    <sequenceFlow id="flow46" sourceRef="notificarCierreAutTicket" targetRef="tareaActualizarCierreAut"></sequenceFlow>
+    <endEvent id="endevent3" name="End"></endEvent>
+    <sequenceFlow id="flow47" sourceRef="tareaActualizarCierreAut" targetRef="endevent3"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_tickets">
     <bpmndi:BPMNPlane bpmnElement="tickets" id="BPMNPlane_tickets">
@@ -478,7 +588,7 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
         <omgdc:Bounds height="35.0" width="35.0" x="10.0" y="183.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="eventoFinal" id="BPMNShape_eventoFinal">
-        <omgdc:Bounds height="35.0" width="35.0" x="1896.0" y="322.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="2210.0" y="183.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaActualizarAnalisis" id="BPMNShape_tareaActualizarAnalisis">
         <omgdc:Bounds height="73.0" width="121.0" x="490.0" y="158.0"></omgdc:Bounds>
@@ -488,6 +598,9 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskAnalizarTicketSupport" id="BPMNShape_taskAnalizarTicketSupport">
         <omgdc:Bounds height="71.0" width="121.0" x="300.0" y="162.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="boundarytimer2" id="BPMNShape_boundarytimer2">
+        <omgdc:Bounds height="30.0" width="30.0" x="400.0" y="222.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
         <omgdc:Bounds height="40.0" width="40.0" x="785.0" y="174.0"></omgdc:Bounds>
@@ -508,25 +621,19 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
         <omgdc:Bounds height="75.0" width="125.0" x="1479.0" y="154.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="boundarytimer1" id="BPMNShape_boundarytimer1">
-        <omgdc:Bounds height="30.0" width="30.0" x="1589.0" y="224.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="tareaActualizaCierreTicket" id="BPMNShape_tareaActualizaCierreTicket">
-        <omgdc:Bounds height="74.0" width="127.0" x="1667.0" y="158.0"></omgdc:Bounds>
+        <omgdc:Bounds height="30.0" width="30.0" x="1590.0" y="210.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
-        <omgdc:Bounds height="40.0" width="40.0" x="1890.0" y="178.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="1950.0" y="178.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaRetrabajarTicket" id="BPMNShape_tareaRetrabajarTicket">
         <omgdc:Bounds height="55.0" width="105.0" x="1460.0" y="8.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaActualizarCierreAut" id="BPMNShape_tareaActualizarCierreAut">
-        <omgdc:Bounds height="55.0" width="105.0" x="1552.0" y="376.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="terminateendevent1" id="BPMNShape_terminateendevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="1780.0" y="386.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="1810.0" y="356.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaNotificarNuevo" id="BPMNShape_tareaNotificarNuevo">
-        <omgdc:Bounds height="55.0" width="105.0" x="240.0" y="349.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="197.0" y="365.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="tareaNotificarEnProceso" id="BPMNShape_tareaNotificarEnProceso">
         <omgdc:Bounds height="55.0" width="105.0" x="641.0" y="70.0"></omgdc:Bounds>
@@ -543,9 +650,27 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
       <bpmndi:BPMNShape bpmnElement="taskNotificarTicketPendiente" id="BPMNShape_taskNotificarTicketPendiente">
         <omgdc:Bounds height="55.0" width="105.0" x="900.0" y="20.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="notificarCierreTicket" id="BPMNShape_notificarCierreTicket">
+        <omgdc:Bounds height="55.0" width="105.0" x="2050.0" y="173.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="notificarCierreAutTicket" id="BPMNShape_notificarCierreAutTicket">
+        <omgdc:Bounds height="55.0" width="105.0" x="1603.0" y="356.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskNotificarCierrePorNoAtencion" id="BPMNShape_taskNotificarCierrePorNoAtencion">
+        <omgdc:Bounds height="55.0" width="105.0" x="362.0" y="376.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="590.0" y="510.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskActualizarTicketPorNoAtencion" id="BPMNShape_taskActualizarTicketPorNoAtencion">
+        <omgdc:Bounds height="55.0" width="105.0" x="362.0" y="500.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
+        <omgdc:Bounds height="35.0" width="35.0" x="1960.0" y="366.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
         <omgdi:waypoint x="185.0" y="233.0"></omgdi:waypoint>
-        <omgdi:waypoint x="292.0" y="349.0"></omgdi:waypoint>
+        <omgdi:waypoint x="249.0" y="365.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
         <omgdi:waypoint x="421.0" y="197.0"></omgdi:waypoint>
@@ -571,20 +696,12 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
         <omgdi:waypoint x="1341.0" y="233.0"></omgdi:waypoint>
         <omgdi:waypoint x="1341.0" y="349.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
-        <omgdi:waypoint x="1604.0" y="191.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1667.0" y="195.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
-        <omgdi:waypoint x="1794.0" y="195.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1890.0" y="198.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
-        <omgdi:waypoint x="1910.0" y="218.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1913.0" y="322.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1990.0" y="198.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2050.0" y="200.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
-        <omgdi:waypoint x="1910.0" y="178.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1970.0" y="178.0"></omgdi:waypoint>
         <omgdi:waypoint x="1909.0" y="30.0"></omgdi:waypoint>
         <omgdi:waypoint x="1649.0" y="30.0"></omgdi:waypoint>
         <omgdi:waypoint x="1565.0" y="35.0"></omgdi:waypoint>
@@ -593,10 +710,6 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
         <omgdi:waypoint x="1460.0" y="35.0"></omgdi:waypoint>
         <omgdi:waypoint x="1341.0" y="35.0"></omgdi:waypoint>
         <omgdi:waypoint x="1341.0" y="165.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow26" id="BPMNEdge_flow26">
-        <omgdi:waypoint x="1657.0" y="403.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1780.0" y="403.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow27" id="BPMNEdge_flow27">
         <omgdi:waypoint x="45.0" y="200.0"></omgdi:waypoint>
@@ -607,12 +720,8 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
         <omgdi:waypoint x="693.0" y="125.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow30" id="BPMNEdge_flow30">
-        <omgdi:waypoint x="292.0" y="349.0"></omgdi:waypoint>
+        <omgdi:waypoint x="249.0" y="365.0"></omgdi:waypoint>
         <omgdi:waypoint x="360.0" y="233.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow31" id="BPMNEdge_flow31">
-        <omgdi:waypoint x="1604.0" y="254.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1604.0" y="376.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
         <omgdi:waypoint x="693.0" y="125.0"></omgdi:waypoint>
@@ -638,6 +747,34 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
       <bpmndi:BPMNEdge bpmnElement="flow38" id="BPMNEdge_flow38">
         <omgdi:waypoint x="1153.0" y="193.0"></omgdi:waypoint>
         <omgdi:waypoint x="1278.0" y="199.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow39" id="BPMNEdge_flow39">
+        <omgdi:waypoint x="2155.0" y="200.0"></omgdi:waypoint>
+        <omgdi:waypoint x="2210.0" y="200.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow41" id="BPMNEdge_flow41">
+        <omgdi:waypoint x="415.0" y="252.0"></omgdi:waypoint>
+        <omgdi:waypoint x="414.0" y="376.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow43" id="BPMNEdge_flow43">
+        <omgdi:waypoint x="414.0" y="431.0"></omgdi:waypoint>
+        <omgdi:waypoint x="414.0" y="500.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow44" id="BPMNEdge_flow44">
+        <omgdi:waypoint x="467.0" y="527.0"></omgdi:waypoint>
+        <omgdi:waypoint x="590.0" y="527.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow45" id="BPMNEdge_flow45">
+        <omgdi:waypoint x="1605.0" y="240.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1655.0" y="356.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow46" id="BPMNEdge_flow46">
+        <omgdi:waypoint x="1708.0" y="383.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1810.0" y="383.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow47" id="BPMNEdge_flow47">
+        <omgdi:waypoint x="1915.0" y="383.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1960.0" y="383.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
