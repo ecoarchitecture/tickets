@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="GP-02-Requisición de Personal" name="GP-02-Requisición de Personal" processRef="process_pool1"></participant>
+  </collaboration>
+  <process id="process_pool1" name="process_pool1" isExecutable="true">
+    <laneSet id="laneSet_process_pool1">
+      <lane id="Resposable de Area (Solicitante)" name="Resposable de Area (Solicitante)">
+        <flowNodeRef>startevent1</flowNodeRef>
+        <flowNodeRef>usertask1</flowNodeRef>
+      </lane>
+      <lane id="lane2" name="Gerente de Area">
+        <flowNodeRef>usertask2</flowNodeRef>
+        <flowNodeRef>exclusivegateway1</flowNodeRef>
+        <flowNodeRef>messagestartevent1</flowNodeRef>
+      </lane>
+      <lane id="lane3" name="Dirección Administrativa">
+        <flowNodeRef>usertask3</flowNodeRef>
+        <flowNodeRef>parallelgateway1</flowNodeRef>
+      </lane>
+      <lane id="lane4" name="Dirección de Contraloría">
+        <flowNodeRef>usertask5</flowNodeRef>
+      </lane>
+      <lane id="lane5" name="Dirección de Finanzas">
+        <flowNodeRef>usertask4</flowNodeRef>
+        <flowNodeRef>parallelgateway2</flowNodeRef>
+        <flowNodeRef>exclusivegateway2</flowNodeRef>
+        <flowNodeRef>messageintermediatecatchevent1</flowNodeRef>
+        <flowNodeRef>messageintermediatecatchevent2</flowNodeRef>
+      </lane>
+      <lane id="presidencia" name="Presidencia">
+        <flowNodeRef>messagestartevent2</flowNodeRef>
+        <flowNodeRef>usertask6</flowNodeRef>
+        <flowNodeRef>endevent1</flowNodeRef>
+      </lane>
+      <lane id="recursoshumanos" name="Recursos Humanos">
+        <flowNodeRef>messagestartevent3</flowNodeRef>
+        <flowNodeRef>usertask7</flowNodeRef>
+        <flowNodeRef>endevent2</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="usertask1" name="Crear solicitud de personal"></userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="usertask2"></sequenceFlow>
+    <userTask id="usertask2" name="Autorizar Nueva Posicion "></userTask>
+    <exclusiveGateway id="exclusivegateway1" name="¿Autoriza Vacante?"></exclusiveGateway>
+    <sequenceFlow id="flow3" sourceRef="usertask2" targetRef="exclusivegateway1"></sequenceFlow>
+    <startEvent id="messagestartevent1" name="Solicitud Cancelada">
+      <messageEventDefinition></messageEventDefinition>
+    </startEvent>
+    <sequenceFlow id="flow4" name="No" sourceRef="exclusivegateway1" targetRef="messagestartevent1"></sequenceFlow>
+    <userTask id="usertask3" name="Autorizar Nueva Posición"></userTask>
+    <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
+    <sequenceFlow id="flow5" name="Si" sourceRef="exclusivegateway1" targetRef="parallelgateway1"></sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="parallelgateway1" targetRef="usertask3"></sequenceFlow>
+    <sequenceFlow id="flow7" sourceRef="parallelgateway1" targetRef="usertask4"></sequenceFlow>
+    <userTask id="usertask4" name="User Task"></userTask>
+    <sequenceFlow id="flow8" sourceRef="parallelgateway1" targetRef="usertask5"></sequenceFlow>
+    <userTask id="usertask5" name="User Task"></userTask>
+    <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
+    <sequenceFlow id="flow9" sourceRef="usertask3" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow10" sourceRef="usertask5" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow11" sourceRef="usertask4" targetRef="parallelgateway2"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway2" name="¿Nueva Posición Autorizada?"></exclusiveGateway>
+    <sequenceFlow id="flow12" sourceRef="parallelgateway2" targetRef="exclusivegateway2"></sequenceFlow>
+    <intermediateCatchEvent id="messageintermediatecatchevent1" name="Reclutar Candidato">
+      <messageEventDefinition></messageEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="flow13" name="Si" sourceRef="exclusivegateway2" targetRef="messageintermediatecatchevent1"></sequenceFlow>
+    <intermediateCatchEvent id="messageintermediatecatchevent2" name="MessageCatchEvent">
+      <messageEventDefinition></messageEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="flow14" name="No" sourceRef="exclusivegateway2" targetRef="messageintermediatecatchevent2"></sequenceFlow>
+    <startEvent id="messagestartevent2" name="Reclutar Candidatos">
+      <messageEventDefinition></messageEventDefinition>
+    </startEvent>
+    <userTask id="usertask6" name="User Task"></userTask>
+    <sequenceFlow id="flow15" sourceRef="messagestartevent2" targetRef="usertask6"></sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow16" sourceRef="usertask6" targetRef="endevent1"></sequenceFlow>
+    <startEvent id="messagestartevent3" name="Reclutar Candidatos">
+      <messageEventDefinition></messageEventDefinition>
+    </startEvent>
+    <userTask id="usertask7" name="User Task"></userTask>
+    <sequenceFlow id="flow17" sourceRef="messagestartevent3" targetRef="usertask7"></sequenceFlow>
+    <endEvent id="endevent2" name="End"></endEvent>
+    <sequenceFlow id="flow18" sourceRef="usertask7" targetRef="endevent2"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="GP-02-Requisición de Personal" id="BPMNShape_GP-02-Requisición de Personal">
+        <omgdc:Bounds height="1140.0" width="1110.0" x="80.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Resposable de Area (Solicitante)" id="BPMNShape_Resposable de Area (Solicitante)">
+        <omgdc:Bounds height="162.0" width="1090.0" x="100.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="162.0" width="1090.0" x="100.0" y="382.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane3" id="BPMNShape_lane3">
+        <omgdc:Bounds height="162.0" width="1090.0" x="100.0" y="544.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane4" id="BPMNShape_lane4">
+        <omgdc:Bounds height="162.0" width="1090.0" x="100.0" y="706.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane5" id="BPMNShape_lane5">
+        <omgdc:Bounds height="162.0" width="1090.0" x="100.0" y="868.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="presidencia" id="BPMNShape_presidencia">
+        <omgdc:Bounds height="162.0" width="1090.0" x="100.0" y="1030.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="recursoshumanos" id="BPMNShape_recursoshumanos">
+        <omgdc:Bounds height="162.0" width="1090.0" x="100.0" y="1192.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="140.0" y="273.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="61.0" width="105.0" x="220.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="61.0" width="105.0" x="220.0" y="420.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="370.0" y="430.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent1" id="BPMNShape_messagestartevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="460.0" y="433.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask3" id="BPMNShape_usertask3">
+        <omgdc:Bounds height="55.0" width="105.0" x="460.0" y="600.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway1" id="BPMNShape_parallelgateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="370.0" y="607.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask4" id="BPMNShape_usertask4">
+        <omgdc:Bounds height="55.0" width="105.0" x="220.0" y="940.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask5" id="BPMNShape_usertask5">
+        <omgdc:Bounds height="55.0" width="105.0" x="340.0" y="760.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway2" id="BPMNShape_parallelgateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="490.0" y="900.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="575.0" y="901.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messageintermediatecatchevent1" id="BPMNShape_messageintermediatecatchevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="578.0" y="990.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messageintermediatecatchevent2" id="BPMNShape_messageintermediatecatchevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="660.0" y="903.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent2" id="BPMNShape_messagestartevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="670.0" y="1110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask6" id="BPMNShape_usertask6">
+        <omgdc:Bounds height="55.0" width="105.0" x="750.0" y="1100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="900.0" y="1110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent3" id="BPMNShape_messagestartevent3">
+        <omgdc:Bounds height="35.0" width="35.0" x="910.0" y="1270.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask7" id="BPMNShape_usertask7">
+        <omgdc:Bounds height="55.0" width="105.0" x="990.0" y="1260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35.0" width="35.0" x="1140.0" y="1270.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="175.0" y="290.0"></omgdi:waypoint>
+        <omgdi:waypoint x="220.0" y="290.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="272.0" y="321.0"></omgdi:waypoint>
+        <omgdi:waypoint x="272.0" y="420.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="325.0" y="450.0"></omgdi:waypoint>
+        <omgdi:waypoint x="370.0" y="450.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="410.0" y="450.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="450.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="14.0" x="420.0" y="434.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="390.0" y="470.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="607.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="100.0" x="390.0" y="470.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="410.0" y="627.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="627.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="370.0" y="627.0"></omgdi:waypoint>
+        <omgdi:waypoint x="272.0" y="628.0"></omgdi:waypoint>
+        <omgdi:waypoint x="272.0" y="940.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="390.0" y="647.0"></omgdi:waypoint>
+        <omgdi:waypoint x="392.0" y="760.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="512.0" y="655.0"></omgdi:waypoint>
+        <omgdi:waypoint x="510.0" y="900.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="392.0" y="815.0"></omgdi:waypoint>
+        <omgdi:waypoint x="392.0" y="919.0"></omgdi:waypoint>
+        <omgdi:waypoint x="490.0" y="920.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="325.0" y="967.0"></omgdi:waypoint>
+        <omgdi:waypoint x="509.0" y="967.0"></omgdi:waypoint>
+        <omgdi:waypoint x="510.0" y="940.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="530.0" y="920.0"></omgdi:waypoint>
+        <omgdi:waypoint x="575.0" y="921.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="595.0" y="941.0"></omgdi:waypoint>
+        <omgdi:waypoint x="595.0" y="990.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="9.0" x="595.0" y="941.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="615.0" y="921.0"></omgdi:waypoint>
+        <omgdi:waypoint x="660.0" y="920.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="13.0" width="14.0" x="631.0" y="908.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="705.0" y="1127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="750.0" y="1127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="855.0" y="1127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="900.0" y="1127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
+        <omgdi:waypoint x="945.0" y="1287.0"></omgdi:waypoint>
+        <omgdi:waypoint x="990.0" y="1287.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
+        <omgdi:waypoint x="1095.0" y="1287.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1140.0" y="1287.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
