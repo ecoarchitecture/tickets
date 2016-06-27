@@ -237,28 +237,48 @@ function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto
   wfMail.args.workflowDueDate = new Date();
 
   wfMail.args.workflowDocuments = wfPackage.children;
+  
+  
+  var group = people.getGroup('GROUP_RECURSOS_HUMANOS');
+	var groupMembers = group.getChildren();
 
-	if (email != null || email != ''){
+	for (var i = 0; i < groupMembers.length; i++)
+	{
+		var member = groupMembers[i];
+		var memberEmail = member.properties['cm:email'];
+		var memberUser = member.properties['cm:userName'];
 
-		try
-		{
-			logger.debug('Enviando correo a end user: ' + email);
+		logger.debug('Enviando notificación a: ' + memberUser + ' [' + memberEmail + ']');
 
-			var mail = actions.create('mail');
+		if (memberEmail != null || memberEmail != ''){
 
-			mail.parameters.to = email;
-			mail.parameters.subject = subject;
-			//mail.parameters.text = text;
-			mail.parameters.template = template;
-			mail.parameters.template_model = wfMail;
+			
 
-			mail.execute(wfPackage);
+				try
+				{
+					logger.debug('Enviando correo a end user: ' + email);
 
-			logger.debug('Correo enviado end user!');
+					var mail = actions.create('mail');
+
+					mail.parameters.to = email;
+					mail.parameters.subject = subject;
+					//mail.parameters.text = text;
+					mail.parameters.template = template;
+					mail.parameters.template_model = wfMail;
+
+					mail.execute(wfPackage);
+
+					logger.debug('Correo enviado end user!');
+				}
+				catch (exception)
+				{
+					logger.debug(exception);
+				}
+			
 		}
-		catch (exception)
-		{
-			logger.debug(exception);
-		}
+
 	}
+  
+
+	
 }

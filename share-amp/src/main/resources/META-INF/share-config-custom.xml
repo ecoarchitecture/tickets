@@ -1434,162 +1434,88 @@
           <set id="tituloCandidato" appearance="title" label="Caracteristicas Candidato" parent="titulo"/>
           <set id="candidato" appearance="fieldset" label="Generales" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
           <set id="idioma" appearance="fieldset" label="Idioma requerido" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
-<!--           <set id="tabulador" appearance="fieldset" label=" Nivel de Contratación" parent="titulo"/> -->
-
-
-		
-
-<!--           <field id="rqwf:solicitudFolio" label="Folio de Solicitud" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserName" label="Nombre Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserFirstName" label="Primer Apellido Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserLastName" label="Segundo Apellido Solicitante" mandatory="false" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserEmail" label="Correo Electrónico Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserTelephone" label="Teléfono Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserMobile" label="Celular Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
           
            <field id="bpm:workflowDescription" label="Puesto Solicitado" mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:numPuestos" label="Números de Puesto Solicitado" mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:localidad" label="Localidad" mandatory="true" set="datosGrales">
           </field>
           
-          
-          
           <field id="rqwf:area" label="Depto.- Área" mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:division" label="División" mandatory="true" set="datosGrales">
           	<control template="/mx/com/gp/components/form/controls/select-division.ftl">
 			</control>
           </field>
-          
           <field id="rqwf:circuito" label="Circuito" mandatory="true" set="datosGrales">
           	<control template="/mx/com/gp/components/form/controls/select-circuito.ftl">
 			</control>
           </field>
-          
-        
-          
           <field id="rqwf:centroCostos" label="Centro Costos" mandatory="true" set="datosGrales">
           <control template="/mx/com/gp/components/form/controls/select-subcircuito.ftl">
 			</control>
           </field>
-          
           <field id="rqwf:nombrePuestoJefe" label="Nombre y Puesto Jefe Superior" mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:nuevaCreacion" label="Nueva Vacante" mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:nuevaCreacion" label="Nueva Vacante" mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:sustitucion" label="Sustitución " mandatory="true" set="datosGrales">
           </field>
-          
            <field id="rqwf:incapacidad" label="Incapacidad " mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:isPromocion" label="Promoción " mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:isCambio" label="Cambio posición / área" mandatory="true" set="datosGrales">
           </field>
-
  			<field id="rqwf:isApoyo" label="Apoyo Temporal" mandatory="true" set="datosGrales">
           </field>
-          
-          <field id="rqwf:sustituyeA" label="Sustituye a" mandatory="true" set="datosGrales">
+          <field id="rqwf:sustituyeA" label="Sustituye a" mandatory="false" set="datosGrales">
           </field>
-          
-          <field id="rqwf:fechaInicioSustitucion" label="A partir del" mandatory="true" set="datosGrales">
+          <field id="rqwf:fechaInicioSustitucion" label="A partir del" mandatory="false" set="datosGrales">
           </field>
-          
           <field id="rqwf:isTiempoIndefinido" label="Tiempo Indefinido" mandatory="true" set="datosGrales">
           </field>
-          
           <field id="rqwf:isTemporal" label="Temporal" mandatory="true" set="datosGrales">
           </field>
-          
-          <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" mandatory="true" set="datosGrales">
+          <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" mandatory="false" set="datosGrales">
           </field>
-           
-          
-          
           <field id="rqwf:isSupervisaPersonal" label="Supervisa personal" mandatory="true" set="candidato">
           </field>
-          
-          <field id="rqwf:numSupervisa" label="Cuantas personas" mandatory="true" set="candidato">
+          <field id="rqwf:numSupervisa" label="Cuantas personas" mandatory="false" set="candidato">
           </field>
-          
            <field id="rqwf:sexoCandidato" label="Sexo" mandatory="true" set="candidato">
           </field>
-          
            <field id="rqwf:estadoCivil" label="Estado Civil" mandatory="true" set="candidato">
           </field>
-          
           <field id="rqwf:edadMaxima" label="Edad Máxima" mandatory="true" set="candidato">
           </field>
-          
            <field id="rqwf:edadMinima" label="Edad Mínima" mandatory="true" set="candidato">
           </field>
-          
-          
           <field id="rqwf:requiereViajar" label="Requiere Viajar" mandatory="true" set="candidato">
           </field>
-          
-          
           <field id="rqwf:escolaridadCandidato" label="Escolaridad" mandatory="true" set="candidato">
           </field>
-          
           <field id="rqwf:isFrecuenteViajar" label="Frecuentemente" mandatory="true" set="candidato">
           </field>
-
 			<field id="rqwf:isExperienciaLaboral" label="Experiencia Laboral" mandatory="true" set="candidato">
           </field>
-
-          
           <field id="rqwf:isEventualViajar" label="Eventualmente" mandatory="true" set="candidato">
           </field>
-          
-          
-          
            <field id="rqwf:especialidadCandidato" label="Especialidad" mandatory="true" set="candidato">
           </field>
-          
-          
-          
             <field id="rqwf:aniosExperienciaLaboral" label="Años" mandatory="true" set="candidato">
           </field>
-          
           <field id="rqwf:numPorcentajeIdiomaHablar" label="Hablar" mandatory="true" set="idioma">
           </field>
-          
           <field id="rqwf:numPorcentajeIdiomaLeer" label="Leer" mandatory="true" set="idioma">
           </field>
-          
            <field id="rqwf:numPorcentajeIdiomaEscrito" label="Escrito" mandatory="true" set="idioma">
           </field>
-          
            <field id="rqwf:numPorcentajeIdiomaTraducir" label="Traducir" mandatory="true" set="idioma">
           </field>
-          
            <field id="rqwf:otroIdioma" label="Otro Idioma" mandatory="true" set="idioma">
           </field>
           
@@ -1598,34 +1524,16 @@
 		              <control-param name="style">width: 99%</control-param>
 				</control>
           </field>
-          
             <field id="rqwf:entrevistador1" label="Entrevistador 1" mandatory="true" set="candidato">
+            	<control template="/org/alfresco/components/form/controls/authority.ftl"></control>
           </field>
-          
-           <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="true" set="candidato">
+           <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="false" set="candidato">
+           	<control template="/org/alfresco/components/form/controls/authority.ftl"></control>
           </field>
-          
-           <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="true" set="candidato">
+           <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="false" set="candidato">
           </field>
-          
-            <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" mandatory="true" set="candidato">
+            <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" mandatory="false" set="candidato">
           </field>
-          
-            
-          
-          
-<!--             <field id="rqwf:nivelTabulador" label="Nivel del tabulador" mandatory="true" set="tabulador"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:rangoMinimoContratacion" label="Rango de contratación" mandatory="true" set="tabulador"> -->
-<!--           </field> -->
-          
-<!--             <field id="rqwf:rangoMaximoContratacion" label="A" mandatory="true" set="tabulador"> -->
-<!--           </field> -->
-          
-<!--             <field id="rqwf:sueldoEquidadInterna" label="Sueldo Equidad Interna" mandatory="true" set="tabulador"> -->
-<!--           </field> -->
-
         </appearance>
       </form>
     </forms>
@@ -1879,9 +1787,11 @@
           </field>
           
             <field id="rqwf:entrevistador1" label="Entrevistador 1" mandatory="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
           </field>
           
            <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
           </field>
           
            <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="true" set="candidato">
@@ -2159,9 +2069,11 @@
           </field>
           
             <field id="rqwf:entrevistador1" label="Entrevistador 1" mandatory="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
           </field>
           
            <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
           </field>
           
            <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="true" set="candidato">

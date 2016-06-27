@@ -269,12 +269,12 @@
 		    
 		    <property name="rqwf:sustituyeA">
 		      <type>d:text</type>
-		      <mandatory>true</mandatory>
+		      <mandatory>false</mandatory>
 		    </property>
 		    
 		     <property name="rqwf:fechaInicioSustitucion">
 		      <type>d:date</type>
-		      <mandatory>true</mandatory>
+		      <mandatory>false</mandatory>
 		    </property>
 		    
 		     <property name="rqwf:isTiempoIndefinido">
@@ -302,7 +302,7 @@
 		    
 		     <property name="rqwf:numSupervisa">
 		      <type>d:int</type>
-		      <mandatory>true</mandatory>
+		      <mandatory>false</mandatory>
 		    </property>
 		    
 		     <property name="rqwf:sexoCandidato">
@@ -436,17 +436,17 @@
 		    
 		     <property name="rqwf:entrevistador2">
 		      <type>d:text</type>
-		      <mandatory>true</mandatory>
+		      <mandatory>false</mandatory>
 		    </property>
 
 			 <property name="rqwf:candidatoSugerido1">
 		      <type>d:text</type>
-		      <mandatory>true</mandatory>
+		      <mandatory>false</mandatory>
 		    </property>
 		    
 		     <property name="rqwf:candidatoSugerido2">
 		      <type>d:text</type>
-		      <mandatory>true</mandatory>
+		      <mandatory>false</mandatory>
 		    </property>
 
 
