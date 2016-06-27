@@ -29,4 +29,26 @@
   	<property name='siteService' ref='SiteService' />
   </bean>
 
+	<bean id="webscript.mx.com.gp.webscripts.division.division.get" class="mx.com.gp.tickets.webscripts.DivisionWebscript" parent="webscript">
+  	<property name='nodeService' ref='NodeService' />
+  	<property name='contentService' ref='ContentService' />
+  	<property name='searchService' ref='SearchService' />
+  	<property name='siteService' ref='SiteService' />
+  </bean>
+  
+  <bean id="webscript.mx.com.gp.webscripts.circuito.circuito.get" class="mx.com.gp.tickets.webscripts.CircuitoWebscript" parent="webscript">
+  	<property name='nodeService' ref='NodeService' />
+  	<property name='contentService' ref='ContentService' />
+  	<property name='searchService' ref='SearchService' />
+  	<property name='siteService' ref='SiteService' />
+  </bean>
+  
+  <bean id="webscript.mx.com.gp.webscripts.subcircuito.subcircuito.get" class="mx.com.gp.tickets.webscripts.SubcircuitoWebscript" parent="webscript">
+  	<property name='nodeService' ref='NodeService' />
+  	<property name='contentService' ref='ContentService' />
+  	<property name='searchService' ref='SearchService' />
+  	<property name='siteService' ref='SiteService' />
+  </bean>
+
+
 </beans>

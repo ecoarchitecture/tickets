@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Webscript Get Circuitos</shortname>
+  <description>Obtiene la lista de Modulos de Circuitos</description>
+  <url>/mx/com/gp/circuito</url>
+  <format default="json">argument</format>
+  <family>GP - Circuitos</family>
+  <authentication runas="admin">guest</authentication>
+  <!--transaction>required</transaction-->
+</webscript>

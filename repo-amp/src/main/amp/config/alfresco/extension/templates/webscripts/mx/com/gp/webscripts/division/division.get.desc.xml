@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Webscript Get Divisiones</shortname>
+  <description>Obtiene la lista de divisiones</description>
+  <url>/mx/com/gp/division</url>
+  <format default="json">argument</format>
+  <family>GP - Divisiones</family>
+  <authentication runas="admin">guest</authentication>
+  <!--transaction>required</transaction-->
+</webscript>

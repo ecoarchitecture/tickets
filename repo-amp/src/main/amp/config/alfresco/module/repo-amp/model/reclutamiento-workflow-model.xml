@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="rhwf:workflowModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+    <!-- Optional meta-data about the model -->
+    <description>Workflow Model for Repo Extension X</description>
+    <author>My Name</author>
+    <version>1.0</version>
+
+    <imports>
+        <!-- Import Alfresco Dictionary Definitions -->
+        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+        <!-- Import Alfresco Content Domain Model Definitions -->
+        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+        <!-- Import Alfresco Workflow Model Definitions -->
+        <import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm"/>
+
+        <import uri="http://www.granporturaria.com.mx/model/content/1.0" prefix="gp"/>
+
+    </imports>
+
+    <!-- Custom namespace for your domain -->
+    <namespaces>
+        <namespace uri="http://www.granportuaria.com.mx/model/reclutamientoWorkflow/1.0" prefix="rhwf"/>
+    </namespaces>
+
+    <!-- ===============================================================================================================
+        Constraints, Types, and Aspects go here...
+    -->
+
+    <!-- ===================================================================================
+    		WF Types
+    	====================================================================================
+    -->
+
+    <types>
+
+
+		<!--  Inicio de captura de solicitud de personal -->
+    	<type name="rhwf:crearSolicitud">
+	      <title>Iniciar Nueva Solicitud de Reclutamiento.</title>
+	      <parent>bpm:startTask</parent>
+	      <properties>
+
+	      </properties>
+
+	      <mandatory-aspects>
+	      	<aspect>rhwf:startSolicitud</aspect>
+	      	<aspect>bpm:assignee</aspect>
+	      </mandatory-aspects>
+
+	    </type>
+	    
+	    
+
+		<type name="rhwf:autorizarSolicitud">
+	      <title>Autorizar Solicitud de Reclutamiento</title>
+	      <parent>bpm:activitiOutcomeTask</parent>
+	      <properties>
+
+	      	<property name="rhwf:autorizacionOutcome">
+	          <type>d:text</type>
+	          <constraints>
+	            <constraint type="LIST" name="rhwf:valsOutcomeAut">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>Autorizar</value>
+	                  <value>Rechazar</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+	        </property>
+
+
+
+			<property name="rhwf:comentariosAutorizacion">
+				<type>d:text</type>
+				<mandatory>true</mandatory>
+			</property>
+	        
+
+	      </properties>
+	      
+	      <overrides>
+                <property name="bpm:packageItemActionGroup">
+                    <default>read_package_item_actions</default>
+                </property>
+                <property name="bpm:outcomePropertyName">
+                    <default>{http://www.granportuaria.com.mx/model/reclutamientoWorkflow/1.0}autorizacionOutcome</default>
+                </property>
+            </overrides>
+
+	      <mandatory-aspects>
+	      	<aspect>rhwf:startSolicitud</aspect>
+	      </mandatory-aspects>
+
+	    </type>
+
+
+
+	    
+
+	    
+
+    </types>
+
+
+    <!-- ===================================================================================
+    		WF Aspects
+    	====================================================================================
+    -->
+
+    <aspects>
+
+    	<aspect name="rhwf:startSolicitud">
+	      <title>Propiedades iniciales de la solicitud de personal</title>
+	      <properties>
+
+
+			<!-- folio -->
+	        <property name="rhwf:solicitudFolio">
+		      <type>d:text</type>
+		      <protected>true</protected>
+		      <mandatory>true</mandatory>
+		    </property>
+
+			<!-- solicitante -->
+		    <property name="rhwf:solicitudUserName">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+		    <property name="rhwf:solicitudUserFirstName">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="rhwf:solicitudUserLastName">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="rhwf:solicitudUserEmail">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="rhwf:solicitudUserTelephone">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+		    <property name="rhwf:solicitudUserMobile">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+
+			<property name="rhwf:division">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:circuito">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:subcircuito">
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
+		    </property>
+
+
+		<!--  Datos generales -->
+
+	      	<property name="rhwf:puesto">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:numPuestos">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:localidad">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:centroCostos">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:area">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:nombrePuestoJefe">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:nuevaCreacion">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:sustitucion">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:incapacidad">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    
+		     <property name="rhwf:isPromocion">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:isCambio">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:isApoyo">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:sustituyeA">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:fechaInicioSustitucion">
+		      <type>d:date</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:isTiempoIndefinido">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		      <property name="rhwf:isTemporal">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:tiempoTemporal">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    
+		    <!-- Candidato -->
+		    
+		     <property name="rhwf:isSupervisaPersonal">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:numSupervisa">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:sexoCandidato">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		      <constraints>
+	            <constraint type="LIST" name="rhwf:sexoConstraints">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>Femenino</value>
+	                  <value>Masculino</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+		    </property>
+		    
+		    
+		     <property name="rhwf:estadoCivil">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		      <constraints>
+	            <constraint type="LIST" name="rhwf:estadoCivilConstraints">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>Soltero</value>
+	                  <value>Casado</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+		    </property>
+		    
+		     <property name="rhwf:edadMaxima">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:edadMinima">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:requiereViajar">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		      <constraints>
+	            <constraint type="LIST" name="rhwf:requiereViajarConstraints">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>Si</value>
+	                  <value>No</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+		    </property>
+		    
+		     <property name="rhwf:isFrecuenteViajar">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:isEventualViajar">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+			 <property name="rhwf:escolaridadCandidato">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+
+			 <property name="rhwf:especialidadCandidato">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:isExperienciaLaboral">
+		      <type>d:boolean</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:aniosExperienciaLaboral">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    
+		     <property name="rhwf:numPorcentajeIdiomaHablar">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    
+		    <property name="rhwf:numPorcentajeIdiomaLeer">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:numPorcentajeIdiomaEscrito">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:numPorcentajeIdiomaTraducir">
+		      <type>d:int</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+
+			<property name="rhwf:otroIdioma">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    
+		    <property name="rhwf:caracteristicasCandidato">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    
+		    <property name="rhwf:entrevistador1">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:entrevistador2">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+			 <property name="rhwf:candidatoSugerido1">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:candidatoSugerido2">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+
+
+			<!-- Rango -->
+			
+			 <property name="rhwf:nivelTabulador">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		     <property name="rhwf:rangoMinimoContratacion">
+		      <type>d:double</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:rangoMaximoContratacion">
+		      <type>d:double</type>
+		      <mandatory>true</mandatory>
+		    </property>
+		    
+		    <property name="rhwf:sueldoEquidadInterna">
+		      <type>d:double</type>
+		      <mandatory>true</mandatory>
+		    </property>
+			
+
+	      </properties>
+	    </aspect>
+
+    </aspects>
+
+</model>

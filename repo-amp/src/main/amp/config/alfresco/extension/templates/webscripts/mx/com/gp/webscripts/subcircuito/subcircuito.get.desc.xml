@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Webscript Get Subcircuitos</shortname>
+  <description>Obtiene la lista de Detalles de Subcircuitos</description>
+  <url>/mx/com/gp/subcircuito</url>
+  <format default="json">argument</format>
+  <family>GP - Sub-circuitos</family>
+  <authentication runas="admin">guest</authentication>
+  <!--transaction>required</transaction-->
+</webscript>
