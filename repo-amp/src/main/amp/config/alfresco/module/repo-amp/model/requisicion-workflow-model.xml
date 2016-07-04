@@ -70,7 +70,105 @@
 	      <title>Autorizar Solicitud de Requisicion</title>
 	      <parent>bpm:activitiOutcomeTask</parent>
 	      <properties>
-			<property name="rqwf:approveRejectOutcome">
+<!-- 			<property name="rqwf:approveRejectOutcome"> -->
+<!--                     <type>d:text</type> -->
+<!--                     <default>Rechazar</default> -->
+<!--                     <constraints> -->
+<!--                         <constraint type="LIST"> -->
+<!--                             <parameter name="allowedValues"> -->
+<!--                                 <list> -->
+<!--                                     <value>Autorizar</value> -->
+<!--                                     <value>Rechazar</value> -->
+<!--                                 </list> -->
+<!--                             </parameter> -->
+<!--                         </constraint> -->
+<!--                     </constraints> -->
+<!--                 </property> -->
+                
+                
+<!-- 	      <property name="rqwf:comentariosAutorizacion"> -->
+<!-- 				<type>d:text</type> -->
+<!-- 				<mandatory>true</mandatory> -->
+<!-- 			</property> -->
+	      </properties>
+	      
+
+	      <mandatory-aspects>
+<!-- 	      	<aspect>stwf:startTicket</aspect> -->
+<!-- 	      	<aspect>bpm:assignee</aspect> -->
+
+			<aspect>rqwf:startSolicitud</aspect>
+			<aspect>rqwf:autorizacion</aspect>
+			
+	      </mandatory-aspects>
+
+	    </type>
+	    
+	    
+	    <type name="rqwf:iniciarReclutamiento">
+	      <title>Iniciar Reclutamiento de Personal</title>
+	      <parent>rqwf:asignarTabulador</parent>
+	      <properties>
+			
+				
+	      </properties>
+
+	      <mandatory-aspects>
+<!-- 	      	<aspect>rqwf:detalleAutorizaciones</aspect> -->
+	      	<aspect>rqwf:detalleAutorizaciones</aspect>
+	      </mandatory-aspects>
+
+	    </type>
+
+	   
+	   
+	   
+
+    </types>
+
+
+    <!-- ===================================================================================
+    		WF Aspects
+    	====================================================================================
+    -->
+
+    <aspects>
+			
+			<aspect name="rqwf:detalleAutorizaciones">
+				<title>Propiedades de las autorizaciones de la solicitud</title>
+					<associations>
+				<association name="rqwf:autorizaciones">
+					<title>Autorizaciones de la Solicitud</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>rqwf:autorizacion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			</aspect>
+			
+			<aspect name="rqwf:autorizacion">
+				<title> Propiedades de la autorizacion de la solicitud</title>
+				<properties>
+					<property name="rqwf:autorizador">
+						<type>d:text</type>
+						<mandatory>false</mandatory>
+					</property>
+					
+					<property name="rqwf:comentarios">
+						<type>d:text</type>
+						<mandatory>true</mandatory>
+					</property>
+					
+					
+					
+					
+					<property name="rqwf:outcomeAutorizacion">
                     <type>d:text</type>
                     <default>Rechazar</default>
                     <constraints>
@@ -84,35 +182,11 @@
                         </constraint>
                     </constraints>
                 </property>
-                
-                
-	      <property name="rqwf:comentariosAutorizacion">
-				<type>d:text</type>
-				<mandatory>true</mandatory>
-			</property>
-	      </properties>
-	      
-
-	      <mandatory-aspects>
-<!-- 	      	<aspect>stwf:startTicket</aspect> -->
-<!-- 	      	<aspect>bpm:assignee</aspect> -->
-			<aspect>rqwf:startSolicitud</aspect>
-	      </mandatory-aspects>
-
-	    </type>
-
-	   
-
-    </types>
-
-
-    <!-- ===================================================================================
-    		WF Aspects
-    	====================================================================================
-    -->
-
-    <aspects>
-
+					
+				</properties>
+				
+			</aspect>
+			
     	<aspect name="rqwf:startSolicitud">
 	      <title>Propiedades iniciales de la solicitud de personal</title>
 	      <properties>
@@ -208,28 +282,6 @@
 <!-- 	            </constraint> -->
 <!-- 	          </constraints> -->
 		    </property>
-		    
-		    
-		    
-		    
-		    
-		    <property name="rqwf:area">
-		      <type>d:text</type>
-		      <mandatory>true</mandatory>
-		      <constraints>
-	            <constraint type="LIST" name="rqwf:areaConstraints">
-	              <parameter name="allowedValues">
-	                <list>
-	                  <value>Área  1</value>
-	                  <value>Área  1</value>
-	                  <value>Área  2</value>
-	                </list>
-	              </parameter>
-	            </constraint>
-	          </constraints>
-		    </property>
-		    
-		    
 		    
 		     <property name="rqwf:nombrePuestoJefe">
 		      <type>d:text</type>
@@ -394,6 +446,21 @@
 		      <mandatory>true</mandatory>
 		    </property>
 		    
+		       <property name="rqwf:idioma">
+		      <type>d:text</type>
+		      <mandatory>true</mandatory>
+		      <constraints>
+	            <constraint type="LIST" name="rqwf:idiomaConstraints">
+	              <parameter name="allowedValues">
+	                <list>
+	                  <value>No requerido</value>
+	                  <value>Inglés</value>
+	                  <value>Alemán</value>
+	                </list>
+	              </parameter>
+	            </constraint>
+	          </constraints>
+		    </property>
 		    
 		     <property name="rqwf:numPorcentajeIdiomaHablar">
 		      <type>d:int</type>
@@ -457,17 +524,17 @@
 		      <property name="rqwf:nivelTabulador">
 		      <type>d:text</type>
 		      <mandatory>false</mandatory>
-		      <constraints>
-	            <constraint type="LIST" name="rqwf:tabuladorConstraints">
-	              <parameter name="allowedValues">
-	                <list>
-	                  <value>Nivel  1</value>
-	                  <value>Nivel  2</value>
-	                  <value>Nivel  3</value>
-	                </list>
-	              </parameter>
-	            </constraint>
-	          </constraints>
+<!-- 		      <constraints> -->
+<!-- 	            <constraint type="LIST" name="rqwf:tabuladorConstraints"> -->
+<!-- 	              <parameter name="allowedValues"> -->
+<!-- 	                <list> -->
+<!-- 	                  <value>Nivel  1</value> -->
+<!-- 	                  <value>Nivel  2</value> -->
+<!-- 	                  <value>Nivel  3</value> -->
+<!-- 	                </list> -->
+<!-- 	              </parameter> -->
+<!-- 	            </constraint> -->
+<!-- 	          </constraints> -->
 		    </property>
 		    
 		    

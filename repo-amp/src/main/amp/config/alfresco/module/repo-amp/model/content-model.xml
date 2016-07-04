@@ -59,6 +59,283 @@
 	    
 	    
 	    
+	    <type name="gp:solicitudRequisicion">
+	    	<title>Solicitud de Requisición de Personal</title>
+	    	<parent>gp:doc</parent>
+	    	<properties>
+	    		
+	    		
+	    		<property name="gp:fechaSolicitud">
+	    			<type>d:datetime</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:folioSolicitud">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:solicitante">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		
+	    		<property name="gp:division">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:circuito">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:subcircuito">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:puesto">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:numPuestos">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:localidad">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:centroCostos">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:nombreJefeInmediato">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isNuevaCreacion">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isSustitucion">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isIncapacidad">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isPromocion">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isCambio">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isApoyo">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:sustituyeA">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:fechaSustitucion">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isTiempoIndefinido">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isTemporal">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:tiempoTemporal">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isSupervisaPersonal">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:numSupervisaPersonal">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:sexoCandidato">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:estadoCivil">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:edadMinima">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:edadMaximo">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isRequiereViajar">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isFrecuenteViajar">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isEventualViajar">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:escolaridad">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		
+	    		<property name="gp:especialidad">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:isExperienciaLaboral">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    			<property name="gp:aniosExperienciaLaboral">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:idioma">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		
+	    		<property name="gp:porcentajeIdiomaHablar">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:porcentajeIdiomaLeer">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:porcentajeIdiomaTraducir">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:porcentajeIdiomaEscrito">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		<property name="gp:otroIdioma">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:caracteristicasCandidato">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:entrevistador1">
+	    			<type>d:text</type>
+	    			<mandatory>true</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:entrevistador2">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:candidato1">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:candidato2">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:nivelTabulador">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:rangoMinimo">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:rangoMaximo">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:sueldoRequerido">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    	</properties>
+
+<associations>
+				<association name="gp:autorizaciones">
+					<title>Autorizaciones de la Solicitud</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>gp:autorizacion</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				
+			</associations>
+	    	
+	    </type>
+	    
 	    <type name="gp:reporteISO9001">
 	    
 	    	<title> Reporte ISO 900 </title>
@@ -304,11 +581,43 @@
 	      <mandatory-aspects>
 	      </mandatory-aspects>
 	    </type>
+	    
+	     
 
 	</types>
 
     <aspects>
 
+       <aspect name="gp:autorizacion">
+            <title>Datos de autorización de GP</title>
+<!--             <parent>sys:base</parent> -->
+            <properties>
+                <property name="gp:nombreAutorizador">
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <multiple>true</multiple>
+                </property>             
+                <property name="gp:comentariosAutorizador">
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <multiple>true</multiple>
+                </property>
+                
+                 <property name="gp:tipoAutorizacion">
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <multiple>true</multiple>
+                </property>
+                
+                
+                <property name="gp:fechaAutorizacion">
+                    <type>d:datetime</type>
+                    <mandatory>true</mandatory>
+                    <multiple>true</multiple>
+                </property>
+                
+            </properties>
+        </aspect>
 
     </aspects>
 

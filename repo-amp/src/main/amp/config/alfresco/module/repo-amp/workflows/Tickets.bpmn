@@ -528,7 +528,7 @@ logger.error(' Ticket Pendiente Notificado');]]></activiti:string>
     </serviceTask>
     <boundaryEvent id="boundarytimer2" name="Timer" attachedToRef="taskAnalizarTicketSupport" cancelActivity="true">
       <timerEventDefinition>
-        <timeDate>${stwf_overDueDate}</timeDate>
+        <timeDate>${bpm_workflowDueDate}</timeDate>
       </timerEventDefinition>
     </boundaryEvent>
     <sequenceFlow id="flow41" sourceRef="boundarytimer2" targetRef="taskNotificarCierrePorNoAtencion"></sequenceFlow>

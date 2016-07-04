@@ -25,7 +25,57 @@
 	</config>
 
 
-  
+   <!-- Document Library config section -->
+    <config evaluator="string-compare" condition="DocumentLibrary">
+    <aspects>
+    <!-- Aspects that a user can see -->
+    <visible>
+        <aspect name="gp:autorizacion" />
+    </visible>
+
+    <!-- Aspects that a user can add. Same as "visible" if left empty -->
+    <addable>
+    </addable>
+
+    <!-- Aspects that a user can remove. Same as "visible" if left empty -->
+    <removeable>
+    </removeable>
+</aspects>
+
+		<types>
+		    <type name="cm:content">
+		        <subtype name="gp:doc" />
+		    </type>
+		    <type name="gp:doc">
+		        <subtype name="gp:reporteISO9001" />
+		        <subtype name="gp:typeSupportTicket"></subtype>
+		        <subtype name="gp:solicitudRequisicion"></subtype>
+		    </type>
+		</types>
+
+    </config>
+
+
+<config evaluator="aspect" condition="gp:autorizacion">
+    <forms>
+        <form>
+            <field-visibility>
+                <show id="gp:nombreAutorizador" />
+                <show id="gp:comentariosAutorizador" />
+                <show id="gp:tipoAutorizacion" />
+                <show id="gp:fechaAutorizacion" />
+                <show id="gp:fechaSolicitud"></show>
+            </field-visibility>
+            <appearance>                    
+                <field id="gp:nombreAutorizador" label="Autorizador" />
+                <field id="gp:comentariosAutorizador" label="Comentarios" />
+                <field id="gp:tipoAutorizacion" label="Resultado" />
+                <field id="gp:fechaAutorizacion" label="Fecha" />
+                <field id="gp:fechaSolicitud" lable="Fecha Solicitud"/>
+            </appearance>
+        </form>
+    </forms>
+</config>
 
 
   <config evaluator="model-type" condition="gp:typeSupportTicket">
@@ -1355,19 +1405,12 @@
       <form>
         <field-visibility>
           
-<!--           <show id="rqwf:solicitudFolio"/> -->
-<!--           <show id="rqwf:solicitudUserName"/> -->
-<!--           <show id="rqwf:solicitudUserFirstName"/> -->
-<!--           <show id="rqwf:solicitudUserLastName"/> -->
-<!--           <show id="rqwf:solicitudUserTelephone"/> -->
-<!--           <show id="rqwf:solicitudUserMobile"/> -->
+
           
           
           <show id="bpm:workflowDescription"></show>
           <show id="rqwf:numPuestos"/>
           <show id="rqwf:localidad"/>
-          
-          <show id="rqwf:area"/>
           
           <show id="rqwf:division"/>
           <show id="rqwf:circuito"/>
@@ -1404,6 +1447,7 @@
           
           <show id="rqwf:isExperienciaLaboral"/>
           <show id="rqwf:aniosExperienciaLaboral"/>
+          <show id="rqwf:idioma"/>
           <show id="rqwf:numPorcentajeIdiomaHablar"/>
           <show id="rqwf:numPorcentajeIdiomaLeer"/>
           <show id="rqwf:numPorcentajeIdiomaEscrito"/>
@@ -1416,19 +1460,11 @@
           <show id="rqwf:candidatoSugerido1"/>
           <show id="rqwf:candidatoSugerido2"/>
           
-<!--           <show id="rqwf:nivelTabulador"/> -->
-<!--           <show id="rqwf:rangoMinimoContratacion"/> -->
-<!--           <show id="rqwf:rangoMaximoContratacion"/> -->
-<!--           <show id="rqwf:sueldoEquidadInterna"/> -->
-          
-          
-  
-          
 
         </field-visibility>
 
         <appearance>
-          <set id="titulo" appearance="title" label="Creación de Solicitud de Personal"/>
+          <set id="titulo" appearance="title" label="Creación de Solicitud de Requisición de Personal"/>
           <set id="datosGrales" appearance="fieldset" label="Datos Generales de la Solicitud" parent="titulo"  template="/org/alfresco/components/form/2-column-set.ftl" />
           
           <set id="tituloCandidato" appearance="title" label="Caracteristicas Candidato" parent="titulo"/>
@@ -1442,8 +1478,6 @@
           <field id="rqwf:localidad" label="Localidad" mandatory="true" set="datosGrales">
           </field>
           
-          <field id="rqwf:area" label="Depto.- Área" mandatory="true" set="datosGrales">
-          </field>
           <field id="rqwf:division" label="División" mandatory="true" set="datosGrales">
           	<control template="/mx/com/gp/components/form/controls/select-division.ftl">
 			</control>
@@ -1508,6 +1542,10 @@
           </field>
             <field id="rqwf:aniosExperienciaLaboral" label="Años" mandatory="true" set="candidato">
           </field>
+           <field id="rqwf:idioma" label="Idioma" mandatory="true" set="idioma">
+          	
+          </field>
+          
           <field id="rqwf:numPorcentajeIdiomaHablar" label="Hablar" mandatory="true" set="idioma">
           </field>
           <field id="rqwf:numPorcentajeIdiomaLeer" label="Leer" mandatory="true" set="idioma">
@@ -1525,10 +1563,10 @@
 				</control>
           </field>
             <field id="rqwf:entrevistador1" label="Entrevistador 1" mandatory="true" set="candidato">
-            	<control template="/org/alfresco/components/form/controls/authority.ftl"></control>
+<!--             	<control template="/org/alfresco/components/form/controls/authority.ftl"></control> -->
           </field>
            <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="false" set="candidato">
-           	<control template="/org/alfresco/components/form/controls/authority.ftl"></control>
+<!--            	<control template="/org/alfresco/components/form/controls/authority.ftl"></control> -->
           </field>
            <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="false" set="candidato">
           </field>
@@ -1543,20 +1581,10 @@
       <forms>
          <form id="workflow-details">
         <field-visibility>
-          
-<!--           <show id="rqwf:solicitudFolio"/> -->
-<!--           <show id="rqwf:solicitudUserName"/> -->
-<!--           <show id="rqwf:solicitudUserFirstName"/> -->
-<!--           <show id="rqwf:solicitudUserLastName"/> -->
-<!--           <show id="rqwf:solicitudUserTelephone"/> -->
-<!--           <show id="rqwf:solicitudUserMobile"/> -->
-          
-          
           <show id="bpm:workflowDescription"></show>
           <show id="rqwf:numPuestos"/>
           <show id="rqwf:localidad"/>
           
-          <show id="rqwf:area"/>
           <show id="rqwf:division"/>
           <show id="rqwf:circuito"/>
           <show id="rqwf:centroCostos"/>
@@ -1572,7 +1600,7 @@
           <show id="rqwf:isTiempoIndefinido"/>
           <show id="rqwf:isTemporal"/>
           <show id="rqwf:tiempoTemporal"/>
-          
+          <show id="packageItems" />
           
           <show id="rqwf:isSupervisaPersonal"/>
           <show id="rqwf:numSupervisa"/>
@@ -1591,6 +1619,7 @@
           
           <show id="rqwf:isExperienciaLaboral"/>
           <show id="rqwf:aniosExperienciaLaboral"/>
+          <show id="rqwf:idioma"/>
           <show id="rqwf:numPorcentajeIdiomaHablar"/>
           <show id="rqwf:numPorcentajeIdiomaLeer"/>
           <show id="rqwf:numPorcentajeIdiomaEscrito"/>
@@ -1615,7 +1644,7 @@
         </field-visibility>
 
         <appearance>
-          <set id="titulo" appearance="title" label="Creación de Solicitud de Personal"/>
+          <set id="titulo" appearance="title" label="Solicitud de Requisición de Personal"/>
           <set id="datosGrales" appearance="fieldset" label="Datos Generales de la Solicitud" parent="titulo"  template="/org/alfresco/components/form/2-column-set.ftl" />
           
           <set id="tituloCandidato" appearance="title" label="Caracteristicas Candidato" parent="titulo"/>
@@ -1623,29 +1652,6 @@
           <set id="idioma" appearance="fieldset" label="Idioma requerido" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
           <set id="tabulador" appearance="fieldset" label=" Nivel de Contratación" parent="titulo"/>
 
-
-		
-
-<!--           <field id="rqwf:solicitudFolio" label="Folio de Solicitud" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserName" label="Nombre Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserFirstName" label="Primer Apellido Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserLastName" label="Segundo Apellido Solicitante" mandatory="false" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserEmail" label="Correo Electrónico Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserTelephone" label="Teléfono Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserMobile" label="Celular Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
           
            <field id="bpm:workflowDescription" label="Puesto Solicitado" mandatory="true" set="datosGrales">
           </field>
@@ -1658,8 +1664,6 @@
           
           
           
-          <field id="rqwf:area" label="Depto.- Área" mandatory="true" set="datosGrales">
-          </field>
           
            <field id="rqwf:division" label="División" mandatory="true" set="datosGrales">
           	<control template="/mx/com/gp/components/form/controls/select-division.ftl">
@@ -1687,7 +1691,7 @@
           <field id="rqwf:nuevaCreacion" label="Nueva Vacante" mandatory="true" set="datosGrales">
           </field>
           
-          <field id="rqwf:sustitucion" label="Sustitución " mandatory="true" set="datosGrales">
+          <field id="rqwf:sustitucion" label="Sustitución " mandatory="false" set="datosGrales">
           </field>
           
            <field id="rqwf:incapacidad" label="Incapacidad " mandatory="true" set="datosGrales">
@@ -1702,10 +1706,10 @@
  			<field id="rqwf:isApoyo" label="Apoyo Temporal" mandatory="true" set="datosGrales">
           </field>
           
-          <field id="rqwf:sustituyeA" label="Sustituye a" mandatory="true" set="datosGrales">
+          <field id="rqwf:sustituyeA" label="Sustituye a" mandatory="false" set="datosGrales">
           </field>
           
-          <field id="rqwf:fechaInicioSustitucion" label="A partir del" mandatory="true" set="datosGrales">
+          <field id="rqwf:fechaInicioSustitucion" label="A partir del" mandatory="false" set="datosGrales">
           </field>
           
           <field id="rqwf:isTiempoIndefinido" label="Tiempo Indefinido" mandatory="true" set="datosGrales">
@@ -1714,15 +1718,18 @@
           <field id="rqwf:isTemporal" label="Temporal" mandatory="true" set="datosGrales">
           </field>
           
-          <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" mandatory="true" set="datosGrales">
+          <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" mandatory="false" set="datosGrales">
           </field>
+          
+          
+          <field id="packageItems" set="datosGrales"/>
            
           
           
           <field id="rqwf:isSupervisaPersonal" label="Supervisa personal" mandatory="true" set="candidato">
           </field>
           
-          <field id="rqwf:numSupervisa" label="Cuantas personas" mandatory="true" set="candidato">
+          <field id="rqwf:numSupervisa" label="Cuantas personas" mandatory="false" set="candidato">
           </field>
           
            <field id="rqwf:sexoCandidato" label="Sexo" mandatory="true" set="candidato">
@@ -1765,6 +1772,10 @@
             <field id="rqwf:aniosExperienciaLaboral" label="Años" mandatory="true" set="candidato">
           </field>
           
+          <field id="rqwf:idioma" label="Idioma" mandatory="true" set="idioma">
+          	
+          </field>
+          
           <field id="rqwf:numPorcentajeIdiomaHablar" label="Hablar" mandatory="true" set="idioma">
           </field>
           
@@ -1787,32 +1798,32 @@
           </field>
           
             <field id="rqwf:entrevistador1" label="Entrevistador 1" mandatory="true" set="candidato">
-            <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
+            
           </field>
           
-           <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="true" set="candidato">
-           <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
+           <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="false" set="candidato">
+           
           </field>
           
-           <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="true" set="candidato">
+           <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="false" set="candidato">
           </field>
           
-            <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" mandatory="true" set="candidato">
+            <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" mandatory="false" set="candidato">
           </field>
           
             
           
           
-            <field id="rqwf:nivelTabulador" label="Nivel del tabulador" mandatory="true" set="tabulador">
+            <field id="rqwf:nivelTabulador" label="Nivel del tabulador" mandatory="false" set="tabulador">
           </field>
           
-          <field id="rqwf:rangoMinimoContratacion" label="Rango de contratación" mandatory="true" set="tabulador">
+          <field id="rqwf:rangoMinimoContratacion" label="Rango de contratación" mandatory="false" set="tabulador">
           </field>
           
-            <field id="rqwf:rangoMaximoContratacion" label="A" mandatory="true" set="tabulador">
+            <field id="rqwf:rangoMaximoContratacion" label="A" mandatory="false" set="tabulador">
           </field>
           
-            <field id="rqwf:sueldoEquidadInterna" label="Sueldo Equidad Interna" mandatory="true" set="tabulador">
+            <field id="rqwf:sueldoEquidadInterna" label="Sueldo Equidad Interna" mandatory="false" set="tabulador">
           </field>
 
         </appearance>
@@ -1825,20 +1836,9 @@
       <forms>
          <form>
         <field-visibility>
-          
-<!--           <show id="rqwf:solicitudFolio"/> -->
-<!--           <show id="rqwf:solicitudUserName"/> -->
-<!--           <show id="rqwf:solicitudUserFirstName"/> -->
-<!--           <show id="rqwf:solicitudUserLastName"/> -->
-<!--           <show id="rqwf:solicitudUserTelephone"/> -->
-<!--           <show id="rqwf:solicitudUserMobile"/> -->
-          
-          
           <show id="bpm:workflowDescription"></show>
           <show id="rqwf:numPuestos"/>
           <show id="rqwf:localidad"/>
-          
-          <show id="rqwf:area"/>
           <show id="rqwf:division"/>
           <show id="rqwf:circuito"/>
           <show id="rqwf:centroCostos"/>
@@ -1854,232 +1854,228 @@
           <show id="rqwf:isTiempoIndefinido"/>
           <show id="rqwf:isTemporal"/>
           <show id="rqwf:tiempoTemporal"/>
-          
+          <show id="packageItems" />
           
           <show id="rqwf:isSupervisaPersonal"/>
           <show id="rqwf:numSupervisa"/>
           <show id="rqwf:sexoCandidato"/>
           <show id="rqwf:estadoCivil"/>
-          
           <show id="rqwf:edadMinima"/>
           <show id="rqwf:edadMaxima"/>
-          
           <show id="rqwf:requiereViajar"/>
           <show id="rqwf:escolaridadCandidato"/>
-          
           <show id="rqwf:isFrecuenteViajar"/>
           <show id="rqwf:especialidadCandidato"/>
           <show id="rqwf:isEventualViajar"/>
-          
           <show id="rqwf:isExperienciaLaboral"/>
           <show id="rqwf:aniosExperienciaLaboral"/>
+          <show id="rqwf:idioma"/>
           <show id="rqwf:numPorcentajeIdiomaHablar"/>
           <show id="rqwf:numPorcentajeIdiomaLeer"/>
           <show id="rqwf:numPorcentajeIdiomaEscrito"/>
           <show id="rqwf:numPorcentajeIdiomaTraducir"/>
           <show id="rqwf:otroIdioma"/>
           <show id="bpm:comment"/>
-          
           <show id="rqwf:entrevistador1"/>
           <show id="rqwf:entrevistador2"/>
           <show id="rqwf:candidatoSugerido1"/>
           <show id="rqwf:candidatoSugerido2"/>
-          
           <show id="rqwf:nivelTabulador"/>
           <show id="rqwf:rangoMinimoContratacion"/>
           <show id="rqwf:rangoMaximoContratacion"/>
           <show id="rqwf:sueldoEquidadInterna"/>
           <show id="transitions" /> 
-          
-  
-          
-
         </field-visibility>
 
         <appearance>
           <set id="titulo" appearance="title" label="Creación de Solicitud de Personal"/>
           <set id="datosGrales" appearance="fieldset" label="Datos Generales de la Solicitud" parent="titulo"  template="/org/alfresco/components/form/2-column-set.ftl" />
-          
           <set id="tituloCandidato" appearance="title" label="Caracteristicas Candidato" parent="titulo"/>
           <set id="candidato" appearance="fieldset" label="Generales" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
           <set id="idioma" appearance="fieldset" label="Idioma requerido" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
           <set id="tabulador" appearance="fieldset" label=" Nivel de Contratación" parent="titulo"/>
 
-
-		
-
-<!--           <field id="rqwf:solicitudFolio" label="Folio de Solicitud" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserName" label="Nombre Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserFirstName" label="Primer Apellido Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserLastName" label="Segundo Apellido Solicitante" mandatory="false" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserEmail" label="Correo Electrónico Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserTelephone" label="Teléfono Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserMobile" label="Celular Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-           <field id="bpm:workflowDescription" label="Puesto Solicitado" mandatory="true" set="datosGrales">
+           <field id="bpm:workflowDescription" label="Puesto Solicitado" read-only="true" set="datosGrales">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          <field id="rqwf:numPuestos" label="Número de Puesto Solicitado" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          <field id="rqwf:localidad" label="Localidad" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+           <field id="rqwf:division" label="División" read-only="true" set="datosGrales">
+          	<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:numPuestos" label="Número de Puesto Solicitado" mandatory="true" set="datosGrales">
+          <field id="rqwf:circuito" label="Circuito" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:localidad" label="Localidad" mandatory="true" set="datosGrales">
+          <field id="rqwf:centroCostos" label="Centro Costos" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
           
-          <field id="rqwf:area" label="Depto.- Área" mandatory="true" set="datosGrales">
+          <field id="rqwf:nombrePuestoJefe" label="Nombre y Puesto Jefe Superior" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:division" label="División" mandatory="true" set="datosGrales">
-          	<control template="/mx/com/gp/components/form/controls/select-division.ftl">
-			</control>
+          <field id="rqwf:nuevaCreacion" label="Nueva Vacante" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:circuito" label="Circuito" mandatory="true" set="datosGrales">
-          	<control template="/mx/com/gp/components/form/controls/select-circuito.ftl">
-			</control>
+          <field id="rqwf:nuevaCreacion" label="Nueva Vacante" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:centroCostos" label="Centro Costos" mandatory="true" set="datosGrales">
-          <control template="/mx/com/gp/components/form/controls/select-subcircuito.ftl">
-			</control>
+          <field id="rqwf:sustitucion" label="Sustitución " read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          
-          
-          <field id="rqwf:nombrePuestoJefe" label="Nombre y Puesto Jefe Superior" mandatory="true" set="datosGrales">
+           <field id="rqwf:incapacidad" label="Incapacidad " read-only="true" set="datosGrales">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:nuevaCreacion" label="Nueva Vacante" mandatory="true" set="datosGrales">
+          <field id="rqwf:isPromocion" label="Promoción " read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:nuevaCreacion" label="Nueva Vacante" mandatory="true" set="datosGrales">
-          </field>
-          
-          <field id="rqwf:sustitucion" label="Sustitución " mandatory="true" set="datosGrales">
-          </field>
-          
-           <field id="rqwf:incapacidad" label="Incapacidad " mandatory="true" set="datosGrales">
-          </field>
-          
-          <field id="rqwf:isPromocion" label="Promoción " mandatory="true" set="datosGrales">
-          </field>
-          
-          <field id="rqwf:isCambio" label="Cambio posición / área" mandatory="true" set="datosGrales">
+          <field id="rqwf:isCambio" label="Cambio posición / área" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
 
- 			<field id="rqwf:isApoyo" label="Apoyo Temporal" mandatory="true" set="datosGrales">
+ 			<field id="rqwf:isApoyo" label="Apoyo Temporal" read-only="true" set="datosGrales">
+ 			<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:sustituyeA" label="Sustituye a" mandatory="true" set="datosGrales">
+          <field id="rqwf:sustituyeA" label="Sustituye a" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:fechaInicioSustitucion" label="A partir del" mandatory="true" set="datosGrales">
+          <field id="rqwf:fechaInicioSustitucion" label="A partir del" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:isTiempoIndefinido" label="Tiempo Indefinido" mandatory="true" set="datosGrales">
+          <field id="rqwf:isTiempoIndefinido" label="Tiempo Indefinido" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:isTemporal" label="Temporal" mandatory="true" set="datosGrales">
+          <field id="rqwf:isTemporal" label="Temporal" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" mandatory="true" set="datosGrales">
+          <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
            
           
+          <field id="packageItems" set="datosGrales"/>
           
-          <field id="rqwf:isSupervisaPersonal" label="Supervisa personal" mandatory="true" set="candidato">
+          <field id="rqwf:isSupervisaPersonal" label="Supervisa personal" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:numSupervisa" label="Cuantas personas" mandatory="true" set="candidato">
+          <field id="rqwf:numSupervisa" label="Cuantas personas" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:sexoCandidato" label="Sexo" mandatory="true" set="candidato">
+           <field id="rqwf:sexoCandidato" label="Sexo" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:estadoCivil" label="Estado Civil" mandatory="true" set="candidato">
+           <field id="rqwf:estadoCivil" label="Estado Civil" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:edadMaxima" label="Edad Máxima" mandatory="true" set="candidato">
+          <field id="rqwf:edadMaxima" label="Edad Máxima" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:edadMinima" label="Edad Mínima" mandatory="true" set="candidato">
+           <field id="rqwf:edadMinima" label="Edad Mínima" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
-          <field id="rqwf:requiereViajar" label="Requiere Viajar" mandatory="true" set="candidato">
+          <field id="rqwf:requiereViajar" label="Requiere Viajar" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
-          <field id="rqwf:escolaridadCandidato" label="Escolaridad" mandatory="true" set="candidato">
+          <field id="rqwf:escolaridadCandidato" label="Escolaridad" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:isFrecuenteViajar" label="Frecuentemente" mandatory="true" set="candidato">
+          <field id="rqwf:isFrecuenteViajar" label="Frecuentemente" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
 
-			<field id="rqwf:isExperienciaLaboral" label="Experiencia Laboral" mandatory="true" set="candidato">
+			<field id="rqwf:isExperienciaLaboral" label="Experiencia Laboral" read-only="true" set="candidato">
+			<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
 
           
-          <field id="rqwf:isEventualViajar" label="Eventualmente" mandatory="true" set="candidato">
+          <field id="rqwf:isEventualViajar" label="Eventualmente" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
           
-           <field id="rqwf:especialidadCandidato" label="Especialidad" mandatory="true" set="candidato">
+           <field id="rqwf:especialidadCandidato" label="Especialidad" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
           
-            <field id="rqwf:aniosExperienciaLaboral" label="Años" mandatory="true" set="candidato">
+            <field id="rqwf:aniosExperienciaLaboral" label="Años" read-only="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:numPorcentajeIdiomaHablar" label="Hablar" mandatory="true" set="idioma">
+          
+          <field id="rqwf:idioma" label="Idioma" mandatory="true" set="idioma">
+          	 <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-          <field id="rqwf:numPorcentajeIdiomaLeer" label="Leer" mandatory="true" set="idioma">
+          <field id="rqwf:numPorcentajeIdiomaHablar" label="Hablar" read-only="true" set="idioma">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:numPorcentajeIdiomaEscrito" label="Escrito" mandatory="true" set="idioma">
+          <field id="rqwf:numPorcentajeIdiomaLeer" label="Leer" read-only="true" set="idioma">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:numPorcentajeIdiomaTraducir" label="Traducir" mandatory="true" set="idioma">
+           <field id="rqwf:numPorcentajeIdiomaEscrito" label="Escrito" read-only="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:otroIdioma" label="Otro Idioma" mandatory="true" set="idioma">
+           <field id="rqwf:numPorcentajeIdiomaTraducir" label="Traducir" read-only="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="bpm:comment" label="Características básicas del puesto" mandatory="true" set="candidato">
-	           <control template="/org/alfresco/components/form/controls/textarea.ftl">
-		              <control-param name="style">width: 99%</control-param>
-				</control>
+           <field id="rqwf:otroIdioma" label="Otro Idioma" read-only="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-            <field id="rqwf:entrevistador1" label="Entrevistador 1" mandatory="true" set="candidato">
-            <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
+           <field id="bpm:comment" label="Características básicas del puesto" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+	       
           </field>
           
-           <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="true" set="candidato">
-           <control template="/org/alfresco/components/form/controls/authority.ftl"></control>
+            <field id="rqwf:entrevistador1" label="Entrevistador 1" read-only="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-           <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="true" set="candidato">
+           <field id="rqwf:entrevistador2" label="Entrevistador 2" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
-            <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" mandatory="true" set="candidato">
+           <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+            <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" read-only="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
             
@@ -2119,7 +2115,6 @@
           <show id="rqwf:numPuestos"/>
           <show id="rqwf:localidad"/>
           
-          <show id="rqwf:area"/>
           <show id="rqwf:division"/>
           <show id="rqwf:circuito"/>
           <show id="rqwf:centroCostos"/>
@@ -2135,6 +2130,7 @@
           <show id="rqwf:isTiempoIndefinido"/>
           <show id="rqwf:isTemporal"/>
           <show id="rqwf:tiempoTemporal"/>
+          <show id="packageItems" />
           
           
           <show id="rqwf:isSupervisaPersonal"/>
@@ -2153,6 +2149,7 @@
           <show id="rqwf:isEventualViajar"/>
           
           <show id="rqwf:isExperienciaLaboral"/>
+          <show id="rqwf:idioma"/>
           <show id="rqwf:aniosExperienciaLaboral"/>
           <show id="rqwf:numPorcentajeIdiomaHablar"/>
           <show id="rqwf:numPorcentajeIdiomaLeer"/>
@@ -2172,8 +2169,8 @@
 <!--           <show id="rqwf:sueldoEquidadInterna"/> -->
           
           
-          <show id="rqwf:approveRejectOutcome" />
-          <show id="rqwf:comentariosAutorizacion"></show>
+          <show id="rqwf:outcomeAutorizacion" />
+          <show id="rqwf:comentarios"></show>
                
                <show id="transitions" /> 
                
@@ -2202,176 +2199,193 @@
 			<set id="tituloAutorizacion" appearance="title" label="Autorización de Solicitud"/>
 			<set id="autorizacion" appearance="fieldset" label="Detalle de Autorización" parent="tituloAutorizacion" />
 
-		
-
-<!--           <field id="rqwf:solicitudFolio" label="Folio de Solicitud" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserName" label="Nombre Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserFirstName" label="Primer Apellido Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserLastName" label="Segundo Apellido Solicitante" mandatory="false" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserEmail" label="Correo Electrónico Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserTelephone" label="Teléfono Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
-<!--           <field id="rqwf:solicitudUserMobile" label="Celular Solicitante" mandatory="true" set="datosGrales"> -->
-<!--           </field> -->
-          
            <field id="bpm:workflowDescription" label="Puesto Solicitado" mandatory="true" set="datosGrales">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:numPuestos" label="Número de Puesto Solicitado" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:localidad" label="Localidad" mandatory="true" set="datosGrales">
-          </field>
-          
-         
-          
-          <field id="rqwf:area" label="Depto.- Área" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:division" label="División" mandatory="true" set="datosGrales" read-only="true">
 <!--           	<control template="/mx/com/gp/components/form/controls/select-division.ftl"> -->
 <!-- 			</control> -->
+<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:circuito" label="Circuito" mandatory="true" set="datosGrales" read-only="true">
 <!--           	<control template="/mx/com/gp/components/form/controls/select-circuito.ftl"> -->
 <!-- 			</control> -->
+<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:centroCostos" label="Centro Costos" mandatory="true" set="datosGrales" read-only="true">
 <!--           <control template="/mx/com/gp/components/form/controls/select-subcircuito.ftl"> -->
 <!-- 			</control> -->
+<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:nombrePuestoJefe" label="Nombre y Puesto Jefe Superior" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:nuevaCreacion" label="Nueva Vacante" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:nuevaCreacion" label="Nueva Vacante" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:sustitucion" label="Sustitución " mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:incapacidad" label="Incapacidad " mandatory="true" set="datosGrales">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:isPromocion" label="Promoción " mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:isCambio" label="Cambio posición / área" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
 
  			<field id="rqwf:isApoyo" label="Apoyo Temporal" mandatory="true" set="datosGrales">
+ 			<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:sustituyeA" label="Sustituye a" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:fechaInicioSustitucion" label="A partir del" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:isTiempoIndefinido" label="Tiempo Indefinido" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:isTemporal" label="Temporal" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" mandatory="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
            
           
+          <field id="packageItems" set="datosGrales"/>
           
           <field id="rqwf:isSupervisaPersonal" label="Supervisa personal" mandatory="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:numSupervisa" label="Cuantas personas" mandatory="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:sexoCandidato" label="Sexo" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:estadoCivil" label="Estado Civil" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:edadMaxima" label="Edad Máxima" mandatory="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:edadMinima" label="Edad Mínima" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
           <field id="rqwf:requiereViajar" label="Requiere Viajar" mandatory="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
           <field id="rqwf:escolaridadCandidato" label="Escolaridad" mandatory="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:isFrecuenteViajar" label="Frecuentemente" mandatory="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
 
 			<field id="rqwf:isExperienciaLaboral" label="Experiencia Laboral" mandatory="true" set="candidato">
+			<control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
 
           
           <field id="rqwf:isEventualViajar" label="Eventualmente" mandatory="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
           
            <field id="rqwf:especialidadCandidato" label="Especialidad" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           
           
             <field id="rqwf:aniosExperienciaLaboral" label="Años" mandatory="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+           <field id="rqwf:idioma" label="Idioma" mandatory="true" set="idioma">
+          	 <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:numPorcentajeIdiomaHablar" label="Hablar" mandatory="true" set="idioma">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
           <field id="rqwf:numPorcentajeIdiomaLeer" label="Leer" mandatory="true" set="idioma">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:numPorcentajeIdiomaEscrito" label="Escrito" mandatory="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:numPorcentajeIdiomaTraducir" label="Traducir" mandatory="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:otroIdioma" label="Otro Idioma" mandatory="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="bpm:comment" label="Características básicas del puesto" mandatory="true" set="candidato">
-	           <control template="/org/alfresco/components/form/controls/textarea.ftl">
-		              <control-param name="style">width: 99%</control-param>
-				</control>
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
             <field id="rqwf:entrevistador1" label="Entrevistador 1" mandatory="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:entrevistador2" label="Entrevistador 2" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
            <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" mandatory="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
             <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" mandatory="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
           
             
@@ -2390,12 +2404,12 @@
 <!--           </field> -->
           
           
-           <field id="rqwf:comentariosAutorizacion" label="Comentarios" mandatory="true" set="autorizacion">
+           <field id="rqwf:comentarios" label="Comentarios" mandatory="true" set="autorizacion">
            		<control template="/org/alfresco/components/form/controls/textarea.ftl">
 		              <control-param name="style">width: 99%</control-param>
 				</control>
           </field>
-          <field id="rqwf:approveRejectOutcome" label="Autorizar" mandatory="true" set="autorizacion">
+          <field id="rqwf:outcomeAutorizacion" label="Autorizar" mandatory="true" set="autorizacion">
           </field>
                
 
@@ -2404,6 +2418,292 @@
          </form>
       </forms>
     </config>
+    
+    
+    <config evaluator="task-type" condition="rqwf:iniciarReclutamiento">
+      <forms>
+         <form>
+        <field-visibility>
+          <show id="bpm:workflowDescription"></show>
+          <show id="rqwf:numPuestos"/>
+          <show id="rqwf:localidad"/>
+          <show id="rqwf:division"/>
+          <show id="rqwf:circuito"/>
+          <show id="rqwf:centroCostos"/>
+          <show id="rqwf:nombrePuestoJefe"/>
+          <show id="rqwf:nuevaCreacion"/>
+          <show id="rqwf:sustitucion"/>
+          <show id="rqwf:incapacidad"/>
+          <show id="rqwf:isPromocion"/>
+          <show id="rqwf:isCambio"/>
+          <show id="rqwf:isApoyo"/>
+          <show id="rqwf:sustituyeA"/>
+          <show id="rqwf:fechaInicioSustitucion"/>
+          <show id="rqwf:isTiempoIndefinido"/>
+          <show id="rqwf:isTemporal"/>
+          <show id="rqwf:tiempoTemporal"/>
+          <show id="packageItems" />
+          
+          
+          <show id="rqwf:isSupervisaPersonal"/>
+          <show id="rqwf:numSupervisa"/>
+          <show id="rqwf:sexoCandidato"/>
+          <show id="rqwf:estadoCivil"/>
+          <show id="rqwf:edadMinima"/>
+          <show id="rqwf:edadMaxima"/>
+          <show id="rqwf:requiereViajar"/>
+          <show id="rqwf:escolaridadCandidato"/>
+          <show id="rqwf:isFrecuenteViajar"/>
+          <show id="rqwf:especialidadCandidato"/>
+          <show id="rqwf:isEventualViajar"/>
+          <show id="rqwf:isExperienciaLaboral"/>
+          <show id="rqwf:aniosExperienciaLaboral"/>
+          <show id="rqwf:idioma"/>
+          <show id="rqwf:numPorcentajeIdiomaHablar"/>
+          <show id="rqwf:numPorcentajeIdiomaLeer"/>
+          <show id="rqwf:numPorcentajeIdiomaEscrito"/>
+          <show id="rqwf:numPorcentajeIdiomaTraducir"/>
+          <show id="rqwf:otroIdioma"/>
+          <show id="bpm:comment"/>
+          <show id="rqwf:entrevistador1"/>
+          <show id="rqwf:entrevistador2"/>
+          <show id="rqwf:candidatoSugerido1"/>
+          <show id="rqwf:candidatoSugerido2"/>
+          <show id="rqwf:nivelTabulador"/>
+          <show id="rqwf:rangoMinimoContratacion"/>
+          <show id="rqwf:rangoMaximoContratacion"/>
+          <show id="rqwf:sueldoEquidadInterna"/>
+          
+          <show id="rqwf:autorizaciones"/>
+          
+          <show id="transitions" /> 
+        </field-visibility>
+
+        <appearance>
+          <set id="titulo" appearance="title" label="Solicitud de Requisición de Personal"/>
+          <set id="datosGrales" appearance="fieldset" label="Datos Generales de la Solicitud" parent="titulo"  template="/org/alfresco/components/form/2-column-set.ftl" />
+          <set id="tituloCandidato" appearance="title" label="Caracteristicas Candidato" parent="titulo"/>
+          <set id="candidato" appearance="fieldset" label="Generales" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
+          <set id="idioma" appearance="fieldset" label="Idioma requerido" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
+          <set id="tabulador" appearance="fieldset" label=" Nivel de Contratación" parent="titulo"/>
+          <set id="autorizaciones" appearance="fieldset" label=" Historico de Autorizaciones" parent="titulo"/>
+
+           <field id="bpm:workflowDescription" label="Puesto Solicitado" read-only="true" set="datosGrales">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          <field id="rqwf:numPuestos" label="Número de Puesto Solicitado" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          <field id="rqwf:localidad" label="Localidad" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+           <field id="rqwf:division" label="División" read-only="true" set="datosGrales">
+          	<control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:circuito" label="Circuito" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:centroCostos" label="Centro Costos" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+          
+          <field id="rqwf:nombrePuestoJefe" label="Nombre y Puesto Jefe Superior" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:nuevaCreacion" label="Nueva Vacante" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:nuevaCreacion" label="Nueva Vacante" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:sustitucion" label="Sustitución " read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:incapacidad" label="Incapacidad " read-only="true" set="datosGrales">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:isPromocion" label="Promoción " read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:isCambio" label="Cambio posición / área" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+
+ 			<field id="rqwf:isApoyo" label="Apoyo Temporal" read-only="true" set="datosGrales">
+ 			<control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:sustituyeA" label="Sustituye a" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:fechaInicioSustitucion" label="A partir del" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:isTiempoIndefinido" label="Tiempo Indefinido" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:isTemporal" label="Temporal" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:tiempoTemporal" label="Por cuanto tiempo" read-only="true" set="datosGrales">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+           <field id="packageItems" set="datosGrales"/>
+          
+          
+          <field id="rqwf:isSupervisaPersonal" label="Supervisa personal" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:numSupervisa" label="Cuantas personas" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:sexoCandidato" label="Sexo" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:estadoCivil" label="Estado Civil" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:edadMaxima" label="Edad Máxima" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:edadMinima" label="Edad Mínima" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+          <field id="rqwf:requiereViajar" label="Requiere Viajar" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+          <field id="rqwf:escolaridadCandidato" label="Escolaridad" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:isFrecuenteViajar" label="Frecuentemente" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+
+			<field id="rqwf:isExperienciaLaboral" label="Experiencia Laboral" read-only="true" set="candidato">
+			<control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+
+          
+          <field id="rqwf:isEventualViajar" label="Eventualmente" read-only="true" set="candidato">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+          
+           <field id="rqwf:especialidadCandidato" label="Especialidad" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+          
+            <field id="rqwf:aniosExperienciaLaboral" label="Años" read-only="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+           <field id="rqwf:idioma" label="Idioma" read-only="true" set="idioma">
+          	 <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:numPorcentajeIdiomaHablar" label="Hablar" read-only="true" set="idioma">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:numPorcentajeIdiomaLeer" label="Leer" read-only="true" set="idioma">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:numPorcentajeIdiomaEscrito" label="Escrito" read-only="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:numPorcentajeIdiomaTraducir" label="Traducir" read-only="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:otroIdioma" label="Otro Idioma" read-only="true" set="idioma">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="bpm:comment" label="Características básicas del puesto" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+	       
+          </field>
+          
+            <field id="rqwf:entrevistador1" label="Entrevistador 1" read-only="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:entrevistador2" label="Entrevistador 2" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+           <field id="rqwf:candidatoSugerido1" label="Candidato Sugerido 1" read-only="true" set="candidato">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+            <field id="rqwf:candidatoSugerido2" label="Candidato Sugerido 2" read-only="true" set="candidato">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+            
+          
+          
+            <field id="rqwf:nivelTabulador" label="Nivel del tabulador" mandatory="true" set="tabulador">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          <field id="rqwf:rangoMinimoContratacion" label="Rango de contratación" mandatory="true" set="tabulador">
+          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+            <field id="rqwf:rangoMaximoContratacion" label="A" mandatory="true" set="tabulador">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+            <field id="rqwf:sueldoEquidadInterna" label="Sueldo Equidad Interna" mandatory="true" set="tabulador">
+            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+              <field id="rqwf:autorizaciones" label="Autorización" read-only="true" set="autorizacion">
+           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
+          </field>
+          
+          
+          <field id="transitions" set="tabulador"></field>
+
+        </appearance>
+      </form>
+    </forms>
+    </config>
+    
+    
+    
   
 
 </alfresco-config>
