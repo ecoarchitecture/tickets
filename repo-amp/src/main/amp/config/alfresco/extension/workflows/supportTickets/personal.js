@@ -62,6 +62,7 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 	values['escolaridad'] =    	ticketOdt.properties['gp:escolaridad'];
 	values['especialidad'] =    	ticketOdt.properties['gp:especialidad'];
 	values['isExperienciaLaboral'] =    	ticketOdt.properties['gp:isExperienciaLaboral'];
+	values['aniosExperienciaLaboral'] =    	ticketOdt.properties['gp:aniosExperienciaLaboral'];
 	values['idioma'] =    	ticketOdt.properties['gp:idioma'];
 	values['porcentajeIdiomaHablar'] =    	ticketOdt.properties['gp:porcentajeIdiomaHablar'];
 	values['porcentajeIdiomaLeer'] =    	ticketOdt.properties['gp:porcentajeIdiomaLeer']	;
@@ -83,6 +84,130 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 		values['sueldoRequerido'] =    	ticketOdt.properties['gp:sueldoRequerido'];
 	}
 	
+	if(ticketOdt.properties['gp:nivelTabulador'] != null){
+		values['nivelTabulador'] =  ticketOdt.properties['gp:nivelTabulador'];
+	}else{
+		values['nivelTabulador'] =  '';
+	}
+	if(ticketOdt.properties['gp:rangoMinimo'] != null){
+		values['rangoMinimo'] =  ticketOdt.properties['gp:rangoMinimo'];
+	}else{
+		values['rangoMinimo'] =  '';
+	}
+	if(ticketOdt.properties['gp:rangoMaximo'] != null){
+		values['rangoMaximo'] =  ticketOdt.properties['gp:rangoMaximo'];
+	}else{
+		values['rangoMaximo'] =  '';
+	}
+	if(ticketOdt.properties['gp:sueldoRequerido'] != null){
+		values['sueldoRequerido'] =  ticketOdt.properties['gp:sueldoRequerido'];
+	}else{
+		values['sueldoRequerido'] =  '';
+	}
+	
+	
+	
+
+	if(ticketOdt.properties['gp:nombreFinanzas'] != null){
+	  values['nombreFinanzas'] = ticketOdt.properties['gp:nombreFinanzas'];
+	}else{
+	  values['nombreFinanzas'] = '';
+	}
+
+	if(ticketOdt.properties['gp:fechaAutFinanzas'] != null){
+	  values['fechaAutFinanzas'] = ticketOdt.properties['gp:fechaAutFinanzas'];
+	}else{
+	  values['fechaAutFinanzas'] = '';
+	}
+
+	if(ticketOdt.properties['gp:comentariosFinanzas'] != null){
+	  values['comentariosFinanzas'] = ticketOdt.properties['gp:comentariosFinanzas'];
+	}  else{
+	  values['comentariosFinanzas'] = '';
+	}
+
+	if(ticketOdt.properties['gp:outcomeFinanzas'] != null){
+	  values['outcomeFinanzas'] = ticketOdt.properties['gp:outcomeFinanzas'];
+	}  else{
+	  values['outcomeFinanzas'] = '';
+	}
+
+	if(ticketOdt.properties['gp:nombreAdmin'] != null){
+	  values['nombreAdmin'] = ticketOdt.properties['gp:nombreAdmin'];
+	}   else{
+	  values['nombreAdmin'] = '';
+	}
+
+	if(ticketOdt.properties['gp:fechaAutAdmin'] != null){
+	  values['fechaAutAdmin'] = ticketOdt.properties['gp:fechaAutAdmin'];
+	}  else{
+	  values['fechaAutAdmin'] = '';
+	}
+
+
+	if(ticketOdt.properties['gp:comentariosAdmin'] != null){
+	  values['comentariosAdmin'] = ticketOdt.properties['gp:comentariosAdmin'];
+	}  else{
+	  values['comentariosAdmin'] = '';
+	}
+	if(ticketOdt.properties['gp:outcomeAdmin'] != null){
+	  values['outcomeAdmin'] = ticketOdt.properties['gp:outcomeAdmin'];
+	}  else{
+	  values['outcomeAdmin'] = '';
+	}
+	if(ticketOdt.properties['gp:nombreContraloria'] != null){
+	  values['nombreContraloria'] = ticketOdt.properties['gp:nombreContraloria'];
+	}  else{
+	  values['nombreContraloria'] = '';
+	}
+	if(ticketOdt.properties['gp:fechaAutContraloria'] != null){
+	  values['fechaAutContraloria'] = ticketOdt.properties['gp:fechaAutContraloria'];
+	}   else{
+	  values['fechaAutContraloria'] = '';
+	}
+	if(ticketOdt.properties['gp:comentariosContraloria'] != null){
+	  values['comentariosContraloria'] = ticketOdt.properties['gp:comentariosContraloria'];
+	}   else{
+	  values['comentariosContraloria'] = '';
+	}
+	if(ticketOdt.properties['gp:outcomeContraloria'] != null){
+	  values['outcomeContraloria'] = ticketOdt.properties['gp:outcomeContraloria'];
+	}  else{
+	  values['outcomeContraloria'] = '';
+	}
+	if(ticketOdt.properties['gp:nombreSolicitante'] != null){
+	  values['nombreSolicitante'] = ticketOdt.properties['gp:nombreSolicitante'];
+	} else{
+	  values['nombreSolicitante'] = '';
+	} 
+	if(ticketOdt.properties['gp:fechaAutSolicitante'] != null){
+	  values['fechaAutSolicitante'] = ticketOdt.properties['gp:fechaAutSolicitante'];
+	}   else{
+	  values['fechaAutSolicitante'] = '';
+	} 
+	if(ticketOdt.properties['gp:comentariosSolicitante'] != null){
+	  values['comentariosSolicitante'] = ticketOdt.properties['gp:comentariosSolicitante'];
+	}  else{
+	  values['comentariosSolicitante'] = '';
+	} 
+	if(ticketOdt.properties['gp:outcomeSolicitante'] != null){
+	  values['outcomeSolicitante'] = ticketOdt.properties['gp:outcomeSolicitante'];
+	}  else{
+	  values['outcomeSolicitante'] = '';
+	} 
+	
+	if(ticketOdt.properties['gp:nombreGerente'] != null){
+		  values['nombreGerente'] = ticketOdt.properties['gp:nombreGerente'];
+		} else{
+		  values['nombreGerente'] = '';
+		} 
+		if(ticketOdt.properties['gp:fechaAutGerente'] != null){
+		  values['fechaAutGerente'] = ticketOdt.properties['gp:fechaAutGerente'];
+		}   else{
+		  values['fechaAutGerente'] = '';
+		} 
+		 
+	
 
 	
 	var content = ticketOdt.processTemplate(template, values);
@@ -95,30 +220,65 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 /**
  * 
  */
-function actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador  ){
+function actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador, fase  ){
 	
 
-	logger.debug('Update solicitud ..');
+	logger.debug('Update solicitud ..' + fase);
 	var workingFolder = site.childByNamePath('Solicitudes/EnProceso');
 	var doc = workingFolder.childByNamePath(rqwf_solicitudFolio );
 	logger.debug('Doc ---'+ doc);
 	
-	var aspectAutorizacion = new Array();
-	aspectAutorizacion['gp:nombreAutorizador'] = rqwf_autorizador;
-	aspectAutorizacion['gp:comentariosAutorizador'] = rqwf_comentarios;
-	aspectAutorizacion['gp:tipoAutorizacion'] = rqwf_outcomeAutorizacion;
-	aspectAutorizacion['gp:fechaAutorizacion'] = new java.util.Date();
 	
-//	var content = createContentFileSolicitudRequisicion( doc );
+	if(fase == 'FINANZAS'){
+		
+		doc.properties['gp:nombreFinanzas'] = rqwf_autorizador;
+		doc.properties['gp:fechaAutFinanzas'] = new java.util.Date();
+		doc.properties['gp:comentariosFinanzas'] = rqwf_comentarios;
+		doc.properties['gp:outcomeFinanzas'] = rqwf_outcomeAutorizacion;
+		
+	}else if(fase == 'ADMIN'){
+		
+		doc.properties['gp:nombreAdmin'] = rqwf_autorizador;
+		doc.properties['gp:fechaAutAdmin'] = new java.util.Date();
+		doc.properties['gp:comentariosAdmin'] = rqwf_comentarios;
+		doc.properties['gp:outcomeAdmin'] = rqwf_outcomeAutorizacion;
+		
+	}else if(fase == 'CONTRALORIA'){
+		doc.properties['gp:nombreContraloria'] = rqwf_autorizador;
+		doc.properties['gp:fechaAutContraloria'] = new java.util.Date();
+		doc.properties['gp:comentariosContraloria'] = rqwf_comentarios;
+		doc.properties['gp:outcomeContraloria'] = rqwf_outcomeAutorizacion;
+	}else if( fase == 'SOLICITANTE'){
+		
+		doc.properties['gp:nombreSolicitante'] = rqwf_autorizador;
+		doc.properties['gp:fechaAutSolicitante'] = new java.util.Date();
+		doc.properties['gp:comentariosSolicitante'] = rqwf_comentarios;
+		doc.properties['gp:outcomeSolicitante'] = rqwf_outcomeAutorizacion;
+	}
+	
+	
+//	var aspectAutorizacion = new Array();
+//	aspectAutorizacion['gp:nombreAutorizador'] = rqwf_autorizador;
+//	aspectAutorizacion['gp:comentariosAutorizador'] = rqwf_comentarios;
+//	aspectAutorizacion['gp:tipoAutorizacion'] = rqwf_outcomeAutorizacion;
+//	aspectAutorizacion['gp:fechaAutorizacion'] = new java.util.Date();
+	
+	var content = createContentFileSolicitudRequisicion( doc );
 	
 	//doc.createAssociation(aspectAutorizacion,"gp:autorizaciones" );
 	
-	doc.addAspect("gp:autorizacion" , aspectAutorizacion);
+	//doc.addAspect("gp:autorizacion" , aspectAutorizacion);
 	
 	doc.save();
-//	var workingCopy = doc.checkout();
-	//workingCopy.content = content;
-//	doc = workingCopy.checkin();
+	
+	
+	
+	var content = createContentFileSolicitudRequisicion( doc );
+	
+	doc.addAspect("cm:versionable");
+	var workingCopy = doc.checkout();
+	workingCopy.content = content;
+	doc = workingCopy.checkin();
 	
 }
 
@@ -405,7 +565,7 @@ function sendMailToEndUser(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email,
 /**
  * 
  */
-function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email, subject)
+function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email, subject, rqwf_areaRh)
 {
 	logger.debug('email '+email);
 	logger.debug('wfFolio '+wfFolio);
@@ -428,7 +588,7 @@ function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto
   wfMail.args.workflowDocuments = wfPackage.children;
   
   
-  var group = people.getGroup('GROUP_RECURSOS_HUMANOS');
+  var group = people.getGroup(rqwf_areaRh);
 	var groupMembers = group.getChildren();
 
 	for (var i = 0; i < groupMembers.length; i++)
@@ -466,8 +626,116 @@ function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto
 			
 		}
 
-	}
+	}	
+}
+
+
+function sendMailAutorizacionGerente(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, subject, rqwf_gerenteArea)
+{
+
+	logger.debug('wfFolio '+wfFolio);
+  
+	var wfId = null;
+  //wfPackage.properties['bpm:workflowInstanceId'];
+
+	var template = site.childByNamePath('Configuracion/Plantillas/wf-email-ftl.htm');
+	logger.debug('template end user '+template);
+
+	var wfMail = new Object();
+	wfMail.args = new Object();
+
+	wfMail.args.workflowTasks = true;
+  wfMail.args.workflowPooled = false;
+  wfMail.args.workflowTitle = wfPuesto;
+  wfMail.args.workflowDescription = 'Autorización de requisición de personal';
+  wfMail.args.workflowDueDate = new Date();
+
+  wfMail.args.workflowDocuments = wfPackage.children;
+  
+  
   
 
-	
+  var userNodeId =  people.getPerson(rqwf_gerenteArea) ;
+  logger.log("user detail Node ::::"+userNodeId.properties.email);
+  var memberEmail = userNodeId.properties.email;
+  
+  logger.debug('Enviando notificación a:  [' + memberEmail + ']');
+  
+  var mail = actions.create('mail');
+
+	mail.parameters.to = memberEmail;
+	mail.parameters.subject = subject;
+	//mail.parameters.text = text;
+	mail.parameters.template = template;
+	mail.parameters.template_model = wfMail;
+
+	mail.execute(wfPackage);
+
+	logger.debug('Correo enviado end user!');
+  
+
+}
+
+function sendMailAutorizacionPendiente(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, subject, group)
+{
+
+	logger.debug('wfFolio '+wfFolio);
+  
+	var wfId = null;
+  //wfPackage.properties['bpm:workflowInstanceId'];
+
+	var template = site.childByNamePath('Configuracion/Plantillas/wf-email-ftl.htm');
+	logger.debug('template end user '+template);
+
+	var wfMail = new Object();
+	wfMail.args = new Object();
+
+	wfMail.args.workflowTasks = true;
+  wfMail.args.workflowPooled = false;
+  wfMail.args.workflowTitle = wfPuesto;
+  wfMail.args.workflowDescription = 'Autorización de requisición de personal';
+  wfMail.args.workflowDueDate = new Date();
+
+  wfMail.args.workflowDocuments = wfPackage.children;
+  
+  
+  var group = people.getGroup(group);
+	var groupMembers = group.getChildren();
+
+	for (var i = 0; i < groupMembers.length; i++)
+	{
+		var member = groupMembers[i];
+		var memberEmail = member.properties['cm:email'];
+		var memberUser = member.properties['cm:userName'];
+
+		logger.debug('Enviando notificación a: ' + memberUser + ' [' + memberEmail + ']');
+
+		if (memberEmail != null || memberEmail != ''){
+
+			
+
+				try
+				{
+					logger.debug('Enviando correo a end user: ' + email);
+
+					var mail = actions.create('mail');
+
+					mail.parameters.to = memberEmail;
+					mail.parameters.subject = subject;
+					//mail.parameters.text = text;
+					mail.parameters.template = template;
+					mail.parameters.template_model = wfMail;
+
+					mail.execute(wfPackage);
+
+					logger.debug('Correo enviado end user!');
+				}
+				catch (exception)
+				{
+					logger.debug(exception);
+				}
+			
+		}
+
+	}	
 }

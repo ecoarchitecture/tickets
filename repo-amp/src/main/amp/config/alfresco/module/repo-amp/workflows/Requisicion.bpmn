@@ -18,18 +18,21 @@ execution.setVariable('rqwf_solicitante' , name);]]></activiti:string>
         <flowNodeRef>startRequisicion</flowNodeRef>
         <flowNodeRef>taskCrearSolicitud</flowNodeRef>
         <flowNodeRef>alfrescoMailtask1</flowNodeRef>
+        <flowNodeRef>taskActualizarAutorizacionAdmin</flowNodeRef>
       </lane>
       <lane id="laneGerenteArea" name="Gerente de Área Solicitante">
         <flowNodeRef>exclusivegateway1</flowNodeRef>
         <flowNodeRef>taskAutorizarSolicitud</flowNodeRef>
         <flowNodeRef>parallelgateway3</flowNodeRef>
         <flowNodeRef>alfrescoScripttask1</flowNodeRef>
+        <flowNodeRef>alfrescoScripttask2</flowNodeRef>
       </lane>
       <lane id="laneDireccionAdmin" name="Dirección Administrativa">
         <flowNodeRef>taskAutorizarRequisicion</flowNodeRef>
       </lane>
       <lane id="laneDireccionControloria" name="Dirección Contraloría">
         <flowNodeRef>taskAutorizarRequisicionContraloria</flowNodeRef>
+        <flowNodeRef>taskActualizarContraloria</flowNodeRef>
       </lane>
       <lane id="laneDireccionFinanzas" name="Dirección Finanzas">
         <flowNodeRef>taskAutorizarFinanzas</flowNodeRef>
@@ -37,6 +40,7 @@ execution.setVariable('rqwf_solicitante' , name);]]></activiti:string>
         <flowNodeRef>exclusivegateway2</flowNodeRef>
         <flowNodeRef>endevent2</flowNodeRef>
         <flowNodeRef>taskNotificarCancelacion</flowNodeRef>
+        <flowNodeRef>taskActualizarAutorizacionFinanzas</flowNodeRef>
       </lane>
       <lane id="laneRecursosHumanos" name="Recursos Humanos">
         <flowNodeRef>endevent1</flowNodeRef>
@@ -45,6 +49,7 @@ execution.setVariable('rqwf_solicitante' , name);]]></activiti:string>
         <flowNodeRef>usertask1</flowNodeRef>
         <flowNodeRef>usertask1</flowNodeRef>
         <flowNodeRef>taskActualizarTabulador</flowNodeRef>
+        <flowNodeRef>taskNotificarAutorizacionSolicitante</flowNodeRef>
       </lane>
     </laneSet>
     <startEvent id="startRequisicion" name="Iniciar Solicitud de Personal" activiti:formKey="rqwf:crearSolicitud"></startEvent>
@@ -100,7 +105,12 @@ var solicitud = crearSolicitudRequisicion(rqwf_solicitante,
               rqwf_candidatoSugerido1,
               rqwf_candidatoSugerido2);
 
-execution.setVariable( 'rqwf_solicitudFolio', solicitud);]]></activiti:string>
+execution.setVariable( 'rqwf_solicitudFolio', solicitud);
+
+var division = execution.getVariable('rqwf_division');
+var group = 'RECURSOS_HUMANOS_'+division;
+logger.debug("Asignando al grupo :" + group);
+execution.setVariable('rqwf_areaRh' , group);]]></activiti:string>
         </activiti:field>
         <activiti:field name="runAs">
           <activiti:string><![CDATA[admin]]></activiti:string>
@@ -130,7 +140,14 @@ execution.setVariable('rqwf_puesto' , bpm_workflowDescription);]]></activiti:str
             <activiti:string><![CDATA[if(task.getVariableLocal('rqwf_outcomeAutorizacion') == 'Autorizar') {
                             var newApprovedCount = rqwf_approveCount + 1;
                             execution.setVariable('rqwf_approveCount', newApprovedCount);
-                        }]]></activiti:string>
+                        }
+
+execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
+execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
+execution.setVariable('rqwf_autorizador', person.properties.userName);
+
+execution.setVariable('rqwf_fechaAutAdmin', new java.util.Date());
+execution.setVariable('rqwf_nombreAdmin',person.properties.userName);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -142,7 +159,13 @@ execution.setVariable('rqwf_puesto' , bpm_workflowDescription);]]></activiti:str
             <activiti:string><![CDATA[if(task.getVariableLocal('rqwf_outcomeAutorizacion') == 'Autorizar') {
                             var newApprovedCount = rqwf_approveCount + 1;
                             execution.setVariable('rqwf_approveCount', newApprovedCount);
-                        }]]></activiti:string>
+                        }
+execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
+execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
+execution.setVariable('rqwf_autorizador', person.properties.userName);
+
+execution.setVariable('rqwf_fechaAutFinanzas', new java.util.Date());
+execution.setVariable('rqwf_nombreFinanzas', person.properties.userName);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -158,7 +181,7 @@ execution.setVariable('rqwf_puesto' , bpm_workflowDescription);]]></activiti:str
 //mail.execute(bpm_package);
 logger.error('Enviando correo de creación de solicitud ');
 
-sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', '', '', bpm_comment, initiator.properties.email, 'Nueva solicitud de requisición de personal.');]]></activiti:string>
+sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', '', '', bpm_comment, initiator.properties.email, 'Nueva solicitud de requisición de personal.', rqwf_areaRh);]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -169,13 +192,13 @@ sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', '', ''
           //var mail = actions.create("mail");
 //mail.execute(bpm_package);
 logger.error('Enviando correo de autorizacion de solicitud ');
-sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal autorizada.');]]></activiti:string>
+sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal autorizada.',rqwf_areaRh);]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
     <sequenceFlow id="flow16" sourceRef="taskCrearSolicitud" targetRef="alfrescoMailtask1"></sequenceFlow>
     <sequenceFlow id="flow18" sourceRef="taskNotificarIniciarReclutamiento" targetRef="taskIniciarReclutamiento"></sequenceFlow>
-    <userTask id="usertask1" name="Asignar Tabulador" activiti:candidateGroups="GROUP_RECURSOS_HUMANOS" activiti:formKey="rqwf:asignarTabulador">
+    <userTask id="usertask1" name="Asignar Tabulador" activiti:candidateGroups="${rqwf_areaRh}" activiti:formKey="rqwf:asignarTabulador">
       <extensionElements>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
@@ -188,34 +211,35 @@ logger.debug('Nivel de Tabulador ::::' +  task.getVariable('rqwf_sueldoEquidadIn
 execution.setVariable('rqwf_nivelTabulador' , nivelTabulador);
 execution.setVariable('rqwf_rangoMinimo' , task.getVariable('rqwf_rangoMinimo'));
 execution.setVariable('rqwf_rangoMaximo' , task.getVariable('rqwf_rangoMaximo'));
-execution.setVariable('rqwf_sueldoEquidadInterna' , task.getVariable('rqwf_sueldoEquidadInterna'));
-
-
-
-]]></activiti:string>
+execution.setVariable('rqwf_sueldoEquidadInterna' , task.getVariable('rqwf_sueldoEquidadInterna'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
+        <activiti:taskListener event="complete" class="mx.com.gp.stickets.listeners.AsignacionSolicitudRequisicion"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow26" sourceRef="exclusivegateway1" targetRef="startRequisicion">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${rqwf_outcomeAutorizacion == "Rechazar"}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow28" sourceRef="alfrescoMailtask1" targetRef="usertask1"></sequenceFlow>
-    <userTask id="taskAutorizarSolicitud" name="Autorizar Solicitud" activiti:candidateGroups="GROUP_RESPONSABLE_AREA" activiti:formKey="rqwf:autorizarSolicitud">
+    <userTask id="taskAutorizarSolicitud" name="Autorizar Solicitud" activiti:candidateUsers="${rqwf_gerenteArea}" activiti:formKey="rqwf:autorizarSolicitud">
       <extensionElements>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[logger.debug(" Outcome ::" + task.getVariable('rqwf_outcomeAutorizacion'));
+
 execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
 execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
-execution.setVariable('rqwf_autorizador', person.properties.userName);]]></activiti:string>
+execution.setVariable('rqwf_autorizador', person.properties.userName);
+
+execution.setVariable('rqwf_fechaAutSolicitante', new java.util.Date());
+execution.setVariable('rqwf_nombreSolicitante', person.properties.userName);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow3" sourceRef="taskAutorizarSolicitud" targetRef="alfrescoScripttask1"></sequenceFlow>
     <sequenceFlow id="flow29" sourceRef="usertask1" targetRef="taskActualizarTabulador"></sequenceFlow>
-    <sequenceFlow id="flow30" sourceRef="exclusivegateway1" targetRef="parallelgateway3">
+    <sequenceFlow id="flow30" sourceRef="exclusivegateway1" targetRef="alfrescoScripttask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${rqwf_outcomeAutorizacion == "Autorizar"}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="taskAutorizarRequisicionContraloria" name="Autorizar Requisicion" activiti:candidateGroups="GROUP_CONTRALORIA" activiti:formKey="rqwf:autorizarSolicitud">
@@ -225,14 +249,20 @@ execution.setVariable('rqwf_autorizador', person.properties.userName);]]></activ
             <activiti:string><![CDATA[if(task.getVariableLocal('rqwf_outcomeAutorizacion') == 'Autorizar') {
                             var newApprovedCount = rqwf_approveCount + 1;
                             execution.setVariable('rqwf_approveCount', newApprovedCount);
-                        }]]></activiti:string>
+                        }
+
+execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
+execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
+execution.setVariable('rqwf_autorizador', person.properties.userName);
+
+execution.setVariable('rqwf_fechaAutContraloria', new java.util.Date());
+execution.setVariable('rqwf_nombreContraloria',person.properties.userName);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
     </userTask>
     <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
-    <sequenceFlow id="flow33" sourceRef="taskAutorizarFinanzas" targetRef="parallelgateway2"></sequenceFlow>
-    <sequenceFlow id="flow35" sourceRef="taskAutorizarRequisicion" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow33" sourceRef="taskActualizarAutorizacionFinanzas" targetRef="parallelgateway2"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow36" sourceRef="parallelgateway2" targetRef="exclusivegateway2"></sequenceFlow>
     <sequenceFlow id="flow37" sourceRef="exclusivegateway2" targetRef="taskNotificarIniciarReclutamiento">
@@ -245,7 +275,7 @@ execution.setVariable('rqwf_autorizador', person.properties.userName);]]></activ
           //var mail = actions.create("mail");
 //mail.execute(bpm_package);
 logger.error('Enviando correo de autorizacion de solicitud ');
-sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.');]]></activiti:string>
+sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.', rqwf_areaRh);]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -258,7 +288,7 @@ sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada'
     <sequenceFlow id="flow7" sourceRef="parallelgateway3" targetRef="taskAutorizarRequisicion"></sequenceFlow>
     <sequenceFlow id="flow32" sourceRef="parallelgateway3" targetRef="taskAutorizarFinanzas"></sequenceFlow>
     <sequenceFlow id="flow34" sourceRef="parallelgateway3" targetRef="taskAutorizarRequisicionContraloria"></sequenceFlow>
-    <sequenceFlow id="flow40" sourceRef="taskAutorizarRequisicionContraloria" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow40" sourceRef="taskActualizarContraloria" targetRef="parallelgateway2"></sequenceFlow>
     <serviceTask id="taskActualizarTabulador" name="Actualizar Tabulador de Solicitud" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
       <extensionElements>
         <activiti:field name="script">
@@ -268,29 +298,106 @@ logger.debug('Actulización de tabulador ...' + rqwf_solicitudFolio);
 
 actualizarTabulador(rqwf_solicitudFolio, rqwf_nivelTabulador, rqwf_rangoMinimo, rqwf_rangoMaximo,rqwf_sueldoEquidadInterna);
 
-
-]]></activiti:string>
+logger.debug('Gerente asignado::' + rqwf_gerenteArea);]]></activiti:string>
         </activiti:field>
         <activiti:field name="runAs">
           <activiti:string><![CDATA[admin]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
-    <sequenceFlow id="flow41" sourceRef="taskActualizarTabulador" targetRef="taskAutorizarSolicitud"></sequenceFlow>
+    <sequenceFlow id="flow41" sourceRef="taskNotificarAutorizacionSolicitante" targetRef="taskAutorizarSolicitud"></sequenceFlow>
     <serviceTask id="alfrescoScripttask1" name="Actualizar Solicitud Autorizada" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
       <extensionElements>
         <activiti:field name="script">
-          <activiti:string><![CDATA[
-<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
 
 logger.debug('Actualizando la autorizacion ..' + rqwf_comentarios + ' ----- ' + rqwf_outcomeAutorizacion + ' autorizarod ::' + rqwf_autorizador);
 
-actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador  );
-]]></activiti:string>
+actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador , 'SOLICITANTE' );
+
+execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
     <sequenceFlow id="flow42" sourceRef="alfrescoScripttask1" targetRef="exclusivegateway1"></sequenceFlow>
+    <serviceTask id="taskNotificarAutorizacionSolicitante" name="Notificar Autorización a Gerente de Área" activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
+          //var mail = actions.create("mail");
+//mail.execute(bpm_package);
+logger.error('Enviando correo de autorizacion de solicitud ');
+sendMailAutorizacionGerente(bpm_package, 'Autorización de Solicitud de Requisión de Personal','',rqwf_solicitudFolio, bpm_comment, 'Se requiere autorizar la solicitud de requisición de personal', rqwf_gerenteArea);]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow43" sourceRef="taskActualizarTabulador" targetRef="taskNotificarAutorizacionSolicitante"></sequenceFlow>
+    <serviceTask id="alfrescoScripttask2" name="Notificar Pendiente de Autorizar por Directiva" activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
+          //var mail = actions.create("mail");
+//mail.execute(bpm_package);
+logger.error('Enviando correo de autorizacion de solicitud ');
+sendMailAutorizacionPendiente(bpm_package, 'Autorización de Solicitud de Requisión de Personal','',rqwf_solicitudFolio, bpm_comment, 'Se requiere autorizar la solicitud de requisición de personal', 'GROUP_DIRECTIVA');]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow44" sourceRef="alfrescoScripttask2" targetRef="parallelgateway3"></sequenceFlow>
+    <sequenceFlow id="flow45" sourceRef="taskAutorizarRequisicion" targetRef="taskActualizarAutorizacionAdmin"></sequenceFlow>
+    <serviceTask id="taskActualizarAutorizacionAdmin" name="Autorizar Solicitud por Administrativa" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
+
+logger.debug('Actualizando la autorizacion ..' + rqwf_comentarios + ' ----- ' + rqwf_outcomeAutorizacion + ' autorizarod ::' + rqwf_autorizador);
+
+actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador , 'ADMIN' );
+execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow35" sourceRef="taskActualizarAutorizacionAdmin" targetRef="parallelgateway2"></sequenceFlow>
+    <serviceTask id="taskActualizarContraloria" name="Autorizar Solicitud por Contraloría" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
+
+logger.debug('Actualizando la autorizacion ..' + rqwf_comentarios + ' ----- ' + rqwf_outcomeAutorizacion + ' autorizarod ::' + rqwf_autorizador);
+
+actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador , 'CONTRALORIA' );
+
+execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow46" sourceRef="taskAutorizarRequisicionContraloria" targetRef="taskActualizarContraloria"></sequenceFlow>
+    <serviceTask id="taskActualizarAutorizacionFinanzas" name="Actualizar Solicitud por Finanzas" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
+
+logger.debug('Actualizando la autorizacion ..' + rqwf_comentarios + ' ----- ' + rqwf_outcomeAutorizacion + ' autorizarod ::' + rqwf_autorizador);
+
+actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador , 'FINANZAS' );
+
+execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="runAs">
+          <activiti:string><![CDATA[admin]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow47" sourceRef="taskAutorizarFinanzas" targetRef="taskActualizarAutorizacionFinanzas"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
     <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
@@ -322,13 +429,13 @@ actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_coment
         <omgdc:Bounds height="75.0" width="121.0" x="250.0" y="80.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
-        <omgdc:Bounds height="40.0" width="40.0" x="1180.0" y="336.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="1080.0" y="336.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskAutorizarRequisicion" id="BPMNShape_taskAutorizarRequisicion">
-        <omgdc:Bounds height="81.0" width="115.0" x="1450.0" y="560.0"></omgdc:Bounds>
+        <omgdc:Bounds height="81.0" width="115.0" x="1410.0" y="560.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskAutorizarFinanzas" id="BPMNShape_taskAutorizarFinanzas">
-        <omgdc:Bounds height="77.0" width="121.0" x="1210.0" y="999.0"></omgdc:Bounds>
+        <omgdc:Bounds height="77.0" width="121.0" x="1236.0" y="950.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskIniciarReclutamiento" id="BPMNShape_taskIniciarReclutamiento">
         <omgdc:Bounds height="84.0" width="111.0" x="1870.0" y="1292.0"></omgdc:Bounds>
@@ -337,16 +444,16 @@ actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_coment
         <omgdc:Bounds height="35.0" width="35.0" x="2030.0" y="1316.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="alfrescoMailtask1" id="BPMNShape_alfrescoMailtask1">
-        <omgdc:Bounds height="75.0" width="121.0" x="460.0" y="80.0"></omgdc:Bounds>
+        <omgdc:Bounds height="75.0" width="121.0" x="400.0" y="80.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskNotificarIniciarReclutamiento" id="BPMNShape_taskNotificarIniciarReclutamiento">
-        <omgdc:Bounds height="80.0" width="125.0" x="1670.0" y="1294.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="125.0" x="1660.0" y="1294.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
-        <omgdc:Bounds height="75.0" width="121.0" x="650.0" y="1266.0"></omgdc:Bounds>
+        <omgdc:Bounds height="75.0" width="121.0" x="490.0" y="1266.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskAutorizarSolicitud" id="BPMNShape_taskAutorizarSolicitud">
-        <omgdc:Bounds height="75.0" width="121.0" x="810.0" y="319.0"></omgdc:Bounds>
+        <omgdc:Bounds height="75.0" width="121.0" x="800.0" y="319.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskAutorizarRequisicionContraloria" id="BPMNShape_taskAutorizarRequisicionContraloria">
         <omgdc:Bounds height="81.0" width="115.0" x="1330.0" y="800.0"></omgdc:Bounds>
@@ -364,13 +471,28 @@ actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_coment
         <omgdc:Bounds height="35.0" width="35.0" x="2030.0" y="1041.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="parallelgateway3" id="BPMNShape_parallelgateway3">
-        <omgdc:Bounds height="40.0" width="40.0" x="1250.0" y="336.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="1280.0" y="336.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="taskActualizarTabulador" id="BPMNShape_taskActualizarTabulador">
-        <omgdc:Bounds height="75.0" width="121.0" x="820.0" y="1266.0"></omgdc:Bounds>
+        <omgdc:Bounds height="75.0" width="121.0" x="640.0" y="1266.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="alfrescoScripttask1" id="BPMNShape_alfrescoScripttask1">
-        <omgdc:Bounds height="75.0" width="121.0" x="1030.0" y="319.0"></omgdc:Bounds>
+        <omgdc:Bounds height="75.0" width="121.0" x="940.0" y="319.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskNotificarAutorizacionSolicitante" id="BPMNShape_taskNotificarAutorizacionSolicitante">
+        <omgdc:Bounds height="75.0" width="121.0" x="800.0" y="1266.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="alfrescoScripttask2" id="BPMNShape_alfrescoScripttask2">
+        <omgdc:Bounds height="73.0" width="111.0" x="1140.0" y="320.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskActualizarAutorizacionAdmin" id="BPMNShape_taskActualizarAutorizacionAdmin">
+        <omgdc:Bounds height="72.0" width="105.0" x="1550.0" y="570.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskActualizarContraloria" id="BPMNShape_taskActualizarContraloria">
+        <omgdc:Bounds height="68.0" width="111.0" x="1480.0" y="807.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskActualizarAutorizacionFinanzas" id="BPMNShape_taskActualizarAutorizacionFinanzas">
+        <omgdc:Bounds height="75.0" width="113.0" x="1240.0" y="1050.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="145.0" y="117.0"></omgdi:waypoint>
@@ -382,45 +504,40 @@ actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_coment
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
         <omgdi:waypoint x="371.0" y="117.0"></omgdi:waypoint>
-        <omgdi:waypoint x="460.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="400.0" y="117.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
-        <omgdi:waypoint x="1795.0" y="1334.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1785.0" y="1334.0"></omgdi:waypoint>
         <omgdi:waypoint x="1870.0" y="1334.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow26" id="BPMNEdge_flow26">
-        <omgdi:waypoint x="1200.0" y="336.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1200.0" y="28.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1100.0" y="336.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1100.0" y="28.0"></omgdi:waypoint>
         <omgdi:waypoint x="125.0" y="28.0"></omgdi:waypoint>
         <omgdi:waypoint x="127.0" y="100.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow28" id="BPMNEdge_flow28">
-        <omgdi:waypoint x="581.0" y="117.0"></omgdi:waypoint>
-        <omgdi:waypoint x="709.0" y="116.0"></omgdi:waypoint>
-        <omgdi:waypoint x="710.0" y="1266.0"></omgdi:waypoint>
+        <omgdi:waypoint x="521.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="551.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="550.0" y="1266.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
-        <omgdi:waypoint x="931.0" y="356.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1030.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="921.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="940.0" y="356.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow29" id="BPMNEdge_flow29">
-        <omgdi:waypoint x="771.0" y="1303.0"></omgdi:waypoint>
-        <omgdi:waypoint x="820.0" y="1303.0"></omgdi:waypoint>
+        <omgdi:waypoint x="611.0" y="1303.0"></omgdi:waypoint>
+        <omgdi:waypoint x="640.0" y="1303.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow30" id="BPMNEdge_flow30">
-        <omgdi:waypoint x="1220.0" y="356.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1250.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1120.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1140.0" y="356.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow33" id="BPMNEdge_flow33">
-        <omgdi:waypoint x="1270.0" y="1076.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1270.0" y="1140.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1296.0" y="1125.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1300.0" y="1140.0"></omgdi:waypoint>
         <omgdi:waypoint x="1590.0" y="1140.0"></omgdi:waypoint>
         <omgdi:waypoint x="1590.0" y="1078.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
-        <omgdi:waypoint x="1565.0" y="600.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1590.0" y="600.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1590.0" y="1038.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow36" id="BPMNEdge_flow36">
         <omgdi:waypoint x="1610.0" y="1058.0"></omgdi:waypoint>
@@ -428,7 +545,7 @@ actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_coment
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow37" id="BPMNEdge_flow37">
         <omgdi:waypoint x="1730.0" y="1078.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1732.0" y="1294.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1722.0" y="1294.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow38" id="BPMNEdge_flow38">
         <omgdi:waypoint x="1750.0" y="1058.0"></omgdi:waypoint>
@@ -439,32 +556,58 @@ actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_coment
         <omgdi:waypoint x="2030.0" y="1058.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
-        <omgdi:waypoint x="1270.0" y="336.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1269.0" y="284.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1507.0" y="284.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1507.0" y="560.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1300.0" y="336.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1299.0" y="284.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1465.0" y="284.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1467.0" y="560.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
-        <omgdi:waypoint x="1270.0" y="376.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1270.0" y="999.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1300.0" y="376.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1296.0" y="950.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow34" id="BPMNEdge_flow34">
-        <omgdi:waypoint x="1290.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1320.0" y="356.0"></omgdi:waypoint>
         <omgdi:waypoint x="1387.0" y="356.0"></omgdi:waypoint>
         <omgdi:waypoint x="1387.0" y="800.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow40" id="BPMNEdge_flow40">
-        <omgdi:waypoint x="1387.0" y="881.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1387.0" y="1058.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1535.0" y="875.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1533.0" y="1056.0"></omgdi:waypoint>
         <omgdi:waypoint x="1570.0" y="1058.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow41" id="BPMNEdge_flow41">
-        <omgdi:waypoint x="880.0" y="1266.0"></omgdi:waypoint>
-        <omgdi:waypoint x="870.0" y="394.0"></omgdi:waypoint>
+        <omgdi:waypoint x="860.0" y="1266.0"></omgdi:waypoint>
+        <omgdi:waypoint x="860.0" y="394.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow42" id="BPMNEdge_flow42">
-        <omgdi:waypoint x="1151.0" y="356.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1180.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1061.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1080.0" y="356.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow43" id="BPMNEdge_flow43">
+        <omgdi:waypoint x="761.0" y="1303.0"></omgdi:waypoint>
+        <omgdi:waypoint x="800.0" y="1303.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow44" id="BPMNEdge_flow44">
+        <omgdi:waypoint x="1251.0" y="356.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1280.0" y="356.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow45" id="BPMNEdge_flow45">
+        <omgdi:waypoint x="1525.0" y="600.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1550.0" y="606.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
+        <omgdi:waypoint x="1655.0" y="606.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1792.0" y="604.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1792.0" y="793.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1590.0" y="1038.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow46" id="BPMNEdge_flow46">
+        <omgdi:waypoint x="1445.0" y="840.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1480.0" y="841.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow47" id="BPMNEdge_flow47">
+        <omgdi:waypoint x="1296.0" y="1027.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1296.0" y="1050.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

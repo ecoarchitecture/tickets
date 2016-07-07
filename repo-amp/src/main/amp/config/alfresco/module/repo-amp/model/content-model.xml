@@ -316,6 +316,92 @@
 	    			<type>d:text</type>
 	    			<mandatory>false</mandatory>
 	    		</property>
+	    		
+	    		
+	    		<property name="gp:nombreFinanzas">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:fechaAutFinanzas">
+	    			<type>d:date</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:comentariosFinanzas">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:outcomeFinanzas">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		
+	    		<property name="gp:nombreAdmin">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:fechaAutAdmin">
+	    			<type>d:date</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:comentariosAdmin">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:outcomeAdmin">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		
+	    		<property name="gp:nombreContraloria">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:fechaAutContraloria">
+	    			<type>d:date</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:comentariosContraloria">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:outcomeContraloria">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:nombreSolicitante">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:fechaAutSolicitante">
+	    			<type>d:date</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:comentariosSolicitante">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		<property name="gp:outcomeSolicitante">
+	    			<type>d:text</type>
+	    			<mandatory>false</mandatory>
+	    		</property>
+	    		
+	    		
+	    		
 	    	</properties>
 
 <associations>
@@ -581,16 +667,9 @@
 	      <mandatory-aspects>
 	      </mandatory-aspects>
 	    </type>
-	    
-	     
-
-	</types>
-
-    <aspects>
-
-       <aspect name="gp:autorizacion">
+	    <type name="gp:autorizacion">
             <title>Datos de autorización de GP</title>
-<!--             <parent>sys:base</parent> -->
+            <parent>sys:base</parent>
             <properties>
                 <property name="gp:nombreAutorizador">
                     <type>d:text</type>
@@ -617,7 +696,14 @@
                 </property>
                 
             </properties>
-        </aspect>
+        </type>
+	     
+
+	</types>
+
+    <aspects>
+
+       
 
     </aspects>
 

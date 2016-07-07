@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <collaboration id="Collaboration">
+    <participant id="poolAutorizar" name="Autorizar" processRef="processAutorizar"></participant>
+    <participant id="poolGenerarSolicitud" name="Generar Solicitud de Requisición de Personal" processRef="processGenerarSolicitud"></participant>
+  </collaboration>
+  <message id="msgSolicitudCreada" name="Solicitud Creada"></message>
+  <process id="processAutorizar" name="Autorizar Solicitud de Requisición de Personal" isExecutable="true">
+    <laneSet id="laneSet_processAutorizar">
+      <lane id="lane1">
+        <flowNodeRef>endevent1</flowNodeRef>
+        <flowNodeRef>messagestartevent1</flowNodeRef>
+        <flowNodeRef>scripttask2</flowNodeRef>
+      </lane>
+    </laneSet>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow4" sourceRef="scripttask2" targetRef="endevent1"></sequenceFlow>
+    <startEvent id="messagestartevent1" name="Message start">
+      <messageEventDefinition messageRef="msgSolicitudCreada"></messageEventDefinition>
+    </startEvent>
+    <sequenceFlow id="flow6" sourceRef="messagestartevent1" targetRef="scripttask2"></sequenceFlow>
+    <scriptTask id="scripttask2" name="Autorizar Solicitud" activiti:autoStoreVariables="false">
+      <script>logger.debug("Autorizando Solicitiud");</script>
+    </scriptTask>
+  </process>
+  <process id="processGenerarSolicitud" name="Generar Solicitud de Requisición de Personal" isExecutable="true">
+    <laneSet id="laneSet_processGenerarSolicitud">
+      <lane id="lane2">
+        <flowNodeRef>messageintermediatecatchevent1</flowNodeRef>
+        <flowNodeRef>scripttask1</flowNodeRef>
+        <flowNodeRef>alfrescoStartevent1</flowNodeRef>
+      </lane>
+    </laneSet>
+    <intermediateCatchEvent id="messageintermediatecatchevent1" name="MessageCatchEvent">
+      <messageEventDefinition messageRef="msgSolicitudCreada"></messageEventDefinition>
+    </intermediateCatchEvent>
+    <sequenceFlow id="flow5" sourceRef="scripttask1" targetRef="messageintermediatecatchevent1"></sequenceFlow>
+    <scriptTask id="scripttask1" name="Crear Solicitud de Requisición de Personal" activiti:autoStoreVariables="false">
+      <script>logger.debug("Creaando Solicitud");</script>
+    </scriptTask>
+    <startEvent id="alfrescoStartevent1" name="Alfresco start" activiti:formKey="wf:submitReviewTask"></startEvent>
+    <sequenceFlow id="flow7" sourceRef="alfrescoStartevent1" targetRef="scripttask1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
+      <bpmndi:BPMNShape bpmnElement="poolAutorizar" id="BPMNShape_poolAutorizar">
+        <omgdc:Bounds height="150.0" width="500.0" x="170.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane1" id="BPMNShape_lane1">
+        <omgdc:Bounds height="150.0" width="480.0" x="190.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="poolGenerarSolicitud" id="BPMNShape_poolGenerarSolicitud">
+        <omgdc:Bounds height="210.0" width="500.0" x="170.0" y="320.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="lane2" id="BPMNShape_lane2">
+        <omgdc:Bounds height="210.0" width="480.0" x="190.0" y="320.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="470.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent1" id="BPMNShape_messagestartevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="240.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask2" id="BPMNShape_scripttask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="320.0" y="150.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messageintermediatecatchevent1" id="BPMNShape_messageintermediatecatchevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="520.0" y="395.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="65.0" width="111.0" x="320.0" y="380.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="alfrescoStartevent1" id="BPMNShape_alfrescoStartevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="230.0" y="395.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="425.0" y="177.0"></omgdi:waypoint>
+        <omgdi:waypoint x="470.0" y="177.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="275.0" y="177.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="177.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="431.0" y="412.0"></omgdi:waypoint>
+        <omgdi:waypoint x="520.0" y="412.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="265.0" y="412.0"></omgdi:waypoint>
+        <omgdi:waypoint x="320.0" y="412.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

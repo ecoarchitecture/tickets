@@ -1722,7 +1722,11 @@
           </field>
           
           
-          <field id="packageItems" set="datosGrales"/>
+          <field id="packageItems" set="datosGrales">
+          	<control>
+          		<control-param name="columns">2</control-param>
+          	</control>
+          </field>
            
           
           
@@ -2282,7 +2286,9 @@
           </field>
            
           
-          <field id="packageItems" set="datosGrales"/>
+          <field id="packageItems" set="datosGrales" >
+          	
+          </field>
           
           <field id="rqwf:isSupervisaPersonal" label="Supervisa personal" mandatory="true" set="candidato">
           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
@@ -2474,7 +2480,7 @@
           <show id="rqwf:rangoMaximoContratacion"/>
           <show id="rqwf:sueldoEquidadInterna"/>
           
-          <show id="rqwf:autorizaciones"/>
+          
           
           <show id="transitions" /> 
         </field-visibility>
@@ -2486,7 +2492,7 @@
           <set id="candidato" appearance="fieldset" label="Generales" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
           <set id="idioma" appearance="fieldset" label="Idioma requerido" parent="tituloCandidato" template="/org/alfresco/components/form/2-column-set.ftl" />
           <set id="tabulador" appearance="fieldset" label=" Nivel de Contratación" parent="titulo"/>
-          <set id="autorizaciones" appearance="fieldset" label=" Historico de Autorizaciones" parent="titulo"/>
+          
 
            <field id="bpm:workflowDescription" label="Puesto Solicitado" read-only="true" set="datosGrales">
            <control template="/org/alfresco/components/form/controls/info.ftl"></control>
@@ -2518,10 +2524,7 @@
           <field id="rqwf:nuevaCreacion" label="Nueva Vacante" read-only="true" set="datosGrales">
           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
           </field>
-          
-          <field id="rqwf:nuevaCreacion" label="Nueva Vacante" read-only="true" set="datosGrales">
-          <control template="/org/alfresco/components/form/controls/info.ftl"></control>
-          </field>
+       
           
           <field id="rqwf:sustitucion" label="Sustitución " read-only="true" set="datosGrales">
           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
@@ -2690,9 +2693,7 @@
           </field>
           
           
-              <field id="rqwf:autorizaciones" label="Autorización" read-only="true" set="autorizacion">
-           <control template="/org/alfresco/components/form/controls/info.ftl"></control>
-          </field>
+            
           
           
           <field id="transitions" set="tabulador"></field>
