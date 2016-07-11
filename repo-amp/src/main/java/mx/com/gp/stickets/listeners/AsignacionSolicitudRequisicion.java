@@ -119,7 +119,7 @@ public class AsignacionSolicitudRequisicion implements TaskListener {
 			
 		}
 		
-		return gerente;
+		return gerente.toLowerCase();
 		
 	}
 

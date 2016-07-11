@@ -340,8 +340,8 @@
 		    </property>
 		    
 		     <property name="rqwf:tiempoTemporal">
-		      <type>d:int</type>
-		      <mandatory>true</mandatory>
+		      <type>d:text</type>
+		      <mandatory>false</mandatory>
 		    </property>
 		    
 		    
@@ -360,6 +360,7 @@
 		     <property name="rqwf:sexoCandidato">
 		      <type>d:text</type>
 		      <mandatory>true</mandatory>
+		       <default>Indistinto</default>
 		      <constraints>
 	            <constraint type="LIST" name="rqwf:sexoConstraints">
 	              <parameter name="allowedValues">
@@ -377,6 +378,7 @@
 		     <property name="rqwf:estadoCivil">
 		      <type>d:text</type>
 		      <mandatory>true</mandatory>
+		      <default>Indistinto</default>
 		      <constraints>
 	            <constraint type="LIST" name="rqwf:estadoCivilConstraints">
 	              <parameter name="allowedValues">
@@ -401,14 +403,17 @@
 		    </property>
 		    
 		    <property name="rqwf:requiereViajar">
+		    
 		      <type>d:text</type>
 		      <mandatory>true</mandatory>
+		      <default>No</default>
 		      <constraints>
 	            <constraint type="LIST" name="rqwf:requiereViajarConstraints">
 	              <parameter name="allowedValues">
 	                <list>
 	                  <value>Si</value>
 	                  <value>No</value>
+	                  
 	                </list>
 	              </parameter>
 	            </constraint>
@@ -496,10 +501,10 @@
 		    </property>
 		    
 		    
-		    <property name="rqwf:entrevistador1">
-		      <type>d:text</type>
-		      <mandatory>true</mandatory>
-		    </property>
+<!-- 		    <property name="rqwf:entrevistador1"> -->
+<!-- 		      <type>d:text</type> -->
+<!-- 		      <mandatory>true</mandatory> -->
+<!-- 		    </property> -->
 		    
 		     <property name="rqwf:entrevistador2">
 		      <type>d:text</type>
@@ -539,12 +544,12 @@
 		    
 		    
 		    
-		     <property name="rqwf:rangoMinimoContratacion">
+		     <property name="rqwf:rangoMinimo">
 		      <type>d:double</type>
 		      <mandatory>false</mandatory>
 		    </property>
 		    
-		    <property name="rqwf:rangoMaximoContratacion">
+		    <property name="rqwf:rangoMaximo">
 		      <type>d:double</type>
 		      <mandatory>false</mandatory>
 		    </property>
@@ -556,6 +561,19 @@
 			
 
 	      </properties>
+	      
+	      
+	      <associations>
+         	<association name="rqwf:entrevistador1">
+				<target>
+					<class>cm:person</class>
+					<mandatory>false</mandatory>
+					<many>false</many>
+				</target>
+			</association>
+       	 </associations>
+       	 
+	      
 	    </aspect>
 
     </aspects>

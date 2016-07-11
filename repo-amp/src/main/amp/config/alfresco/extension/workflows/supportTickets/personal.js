@@ -39,19 +39,51 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 	values['localidad'] =    	ticketOdt.properties['gp:localidad'];
 	values['centroCostos'] =    	ticketOdt.properties['gp:centroCostos'];
 	values['nombreJefeInmediato'] =    	ticketOdt.properties['gp:nombreJefeInmediato'];
+	
 	values['isNuevaCreacion'] =    	ticketOdt.properties['gp:isNuevaCreacion'];
 	values['isSustitucion'] =    	ticketOdt.properties['gp:isSustitucion'];
 	values['isIncapacidad'] =    	ticketOdt.properties['gp:isIncapacidad'];
 	values['isPromocion'] =    	ticketOdt.properties['gp:isPromocion'];
 	values['isCambio'] =    	ticketOdt.properties['gp:isCambio'];
 	values['isApoyo'] =    	ticketOdt.properties['gp:isApoyo'];
-	values['sustituyeA'] =    	ticketOdt.properties['gp:sustituyeA'];
-	values['fechaSustitucion'] =    	ticketOdt.properties['gp:fechaSustitucion'];
+	
+	
+	logger.debug("Campo ::::" + ticketOdt.properties['gp:sustituyeA']);
+	
+	if(ticketOdt.properties['gp:sustituyeA'] != null){
+		
+		values['sustituyeA'] =    	ticketOdt.properties['gp:sustituyeA'];
+	}else{
+		values['sustituyeA'] =  '';
+	}
+	
+	
+	if(ticketOdt.properties['gp:fechaSustitucion'] != null){
+		values['fechaSustitucion'] =    	ticketOdt.properties['gp:fechaSustitucion'];
+	}else{
+		values['fechaSustitucion'] =  '';
+	}
+	
+	
+	
+	
 	values['isTiempoIndefinido'] =    	ticketOdt.properties['gp:isTiempoIndefinido'];
 	values['isTemporal'] =    	ticketOdt.properties['gp:isTemporal'];
-	values['tiempoTemporal'] =    	ticketOdt.properties['gp:tiempoTemporal'];
+	
+	if(ticketOdt.properties['gp:tiempoTemporal'] != null){
+		values['tiempoTemporal'] =    	ticketOdt.properties['gp:tiempoTemporal'];
+	}else{
+		values['tiempoTemporal'] =  '';
+	}
+	
 	values['isSupervisaPersonal'] =    	ticketOdt.properties['gp:isSupervisaPersonal'];
-	values['numSupervisaPersonal'] =    	ticketOdt.properties['gp:numSupervisaPersonal'];
+	
+	if(ticketOdt.properties['gp:numSupervisaPersonal'] != null){
+		values['numSupervisaPersonal'] =    	ticketOdt.properties['gp:numSupervisaPersonal'];
+	}else{
+		values['numSupervisaPersonal'] =  0;
+	}
+	
 	values['sexoCandidato'] =    	ticketOdt.properties['gp:sexoCandidato'];
 	values['estadoCivil'] =    	ticketOdt.properties['gp:estadoCivil'];
 	values['edadMinima'] =    	ticketOdt.properties['gp:edadMinima'];
@@ -69,11 +101,42 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 	values['porcentajeIdiomaTraducir'] =    	ticketOdt.properties['gp:porcentajeIdiomaTraducir'];
 	values['otroIdioma'] =    	ticketOdt.properties['gp:otroIdioma']			;
 	values['caracteristicasCandidato'] =    	ticketOdt.properties['gp:caracteristicasCandidato'];
-	values['entrevistador1'] =    	ticketOdt.properties['gp:entrevistador1'];
-	values['entrevistador2'] =    	ticketOdt.properties['gp:entrevistador2'];
-		
-	values['candidato1'] =    	ticketOdt.properties['gp:candidato1']	;
-	values['candidato2'] =    	ticketOdt.properties['gp:candidato2']	;
+	
+	var e1 = ticketOdt.properties['gp:entrevistador1'];
+	var e1Name = e1.properties.firstName +" " + e1.properties.lastName;
+	values['entrevistador1'] =    	e1Name;
+	
+	
+	if( ticketOdt.properties['gp:vistoBuenoRh'] != null){
+		var rh = ticketOdt.properties['gp:vistoBuenoRh'];
+		var rhName = rh.properties.firstName +" " + rh.properties.lastName;
+		values['vistoBuenoRh'] = rhName;
+	}else {
+		values['vistoBuenoRh'] = "";
+	}
+	
+	
+
+	if(ticketOdt.properties['gp:entrevistador2'] != null){
+		values['entrevistador2'] =    	ticketOdt.properties['gp:entrevistador2'];
+	}else{
+		values['entrevistador2'] =  "";
+	}	
+	
+	if(ticketOdt.properties['gp:candidato1'] != null){
+		values['candidato1'] =    	ticketOdt.properties['gp:candidato1'];
+	}else{
+		values['candidato1'] =  "";
+	}
+	
+	
+	if(ticketOdt.properties['gp:candidato2'] != null){
+		values['candidato2'] =    	ticketOdt.properties['gp:candidato2'];
+	}else{
+		values['candidato2'] =  "";
+	}	
+	
+	
 
 	if(ticketOdt.properties['gp:nivelTabulador'] != null){
 		logger.debug('Actualizando tabulador ...' + ticketOdt.properties['gp:nivelTabulador'] );
@@ -206,6 +269,16 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 		}   else{
 		  values['fechaAutGerente'] = '';
 		} 
+		if(ticketOdt.properties['gp:comentariosGerente'] != null){
+			  values['comentariosGerente'] = ticketOdt.properties['gp:comentariosGerente'];
+			}  else{
+			  values['comentariosGerente'] = '';
+			} 
+			if(ticketOdt.properties['gp:outcomeGerente'] != null){
+			  values['outcomeGerente'] = ticketOdt.properties['gp:outcomeGerente'];
+			}  else{
+			  values['outcomeGerente'] = '';
+			} 
 		 
 	
 
@@ -254,6 +327,12 @@ function actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rq
 		doc.properties['gp:fechaAutSolicitante'] = new java.util.Date();
 		doc.properties['gp:comentariosSolicitante'] = rqwf_comentarios;
 		doc.properties['gp:outcomeSolicitante'] = rqwf_outcomeAutorizacion;
+	}else if( fase == 'GERENTE'){
+		
+		doc.properties['gp:nombreGerente'] = rqwf_autorizador;
+		doc.properties['gp:fechaAutGerente'] = new java.util.Date();
+		doc.properties['gp:comentariosGerente'] = rqwf_comentarios;
+		doc.properties['gp:outcomeGerente'] = rqwf_outcomeAutorizacion;
 	}
 	
 	
@@ -286,7 +365,7 @@ function actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rq
 /**
  * 
  */
-function actualizarTabulador(rqwf_solicitudFolio, rqwf_nivelTabulador, rqwf_rangoMinimo, rqwf_rangoMaximo, rqwf_sueldoRequerido){
+function actualizarTabulador(rqwf_solicitudFolio, rqwf_nivelTabulador, rqwf_rangoMinimo, rqwf_rangoMaximo, rqwf_sueldoRequerido, rqwf_voborh){
 	
 
 	logger.debug('Update solicitud ..');
@@ -298,6 +377,7 @@ function actualizarTabulador(rqwf_solicitudFolio, rqwf_nivelTabulador, rqwf_rang
 	doc.properties['gp:rangoMinimo'] = rqwf_rangoMinimo;
 	doc.properties['gp:rangoMaximo'] = rqwf_rangoMaximo;
 	doc.properties['gp:sueldoRequerido'] = rqwf_sueldoRequerido;
+	doc.properties['gp:vistoBuenoRh'] = rqwf_voborh;
 	
 	doc.save();
 	
@@ -396,6 +476,7 @@ function crearSolicitudRequisicion(solicitante,
 	ticketOdt.properties['gp:fechaSolicitud']			= new java.util.Date();
 	ticketOdt.properties['gp:folioSolicitud']			= nameTicket;
 	ticketOdt.properties['gp:solicitante']			= solicitante;
+	
 	ticketOdt.properties['gp:division']			= division;
 	ticketOdt.properties['gp:circuito']			= circuito;
 	ticketOdt.properties['gp:subcircuito']			= subcircuito;
@@ -450,7 +531,9 @@ function crearSolicitudRequisicion(solicitante,
 	var content = createContentFileSolicitudRequisicion( ticketOdt );
 	ticketOdt.content = content;
 	ticketOdt.save();
+	//	Transform to PDF
 	//ticketOdt.transformDocument('application/pdf');
+	//logger.debug('Se transformó en pdf');
 
 	//var ticketPDF = workingFolder.childByNamePath(nameTicketPdf);
 	bpm_package.addNode(ticketOdt);
@@ -529,7 +612,7 @@ function sendMailToEndUser(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email,
 	wfMail.args.workflowTasks = true;
   wfMail.args.workflowPooled = true;
   wfMail.args.workflowTitle = wfPuesto;
-  wfMail.args.workflowDescription = 'Solicitud de requisición de personal';
+  wfMail.args.workflowDescription = 'Se ha creado la Solicitud de requisición de personal';
   wfMail.args.workflowDueDate = new Date();
 
   wfMail.args.workflowDocuments = wfPackage.children;
@@ -567,7 +650,8 @@ function sendMailToEndUser(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email,
  */
 function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email, subject, rqwf_areaRh)
 {
-	logger.debug('email '+email);
+	
+	logger.debug('email RH :: '+rqwf_areaRh);
 	logger.debug('wfFolio '+wfFolio);
   
 	var wfId = null;
@@ -587,8 +671,11 @@ function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto
 
   wfMail.args.workflowDocuments = wfPackage.children;
   
-  
+//  var str = 'GROUP_'+rqwf_areaRh;
+//	  var replacedStr = rqwf_areaRh.replace(/\s/g, "_");
+	  
   var group = people.getGroup(rqwf_areaRh);
+  logger.debug("Group:::" + group);
 	var groupMembers = group.getChildren();
 
 	for (var i = 0; i < groupMembers.length; i++)
@@ -716,7 +803,7 @@ function sendMailAutorizacionPendiente(wfPackage, wfTitle, wfText, wfFolio, wfPu
 
 				try
 				{
-					logger.debug('Enviando correo a end user: ' + email);
+					logger.debug('Enviando correo a end user: ' + memberEmail);
 
 					var mail = actions.create('mail');
 

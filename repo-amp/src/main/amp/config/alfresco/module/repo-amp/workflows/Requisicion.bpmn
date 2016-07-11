@@ -18,7 +18,6 @@ execution.setVariable('rqwf_solicitante' , name);]]></activiti:string>
         <flowNodeRef>startRequisicion</flowNodeRef>
         <flowNodeRef>taskCrearSolicitud</flowNodeRef>
         <flowNodeRef>alfrescoMailtask1</flowNodeRef>
-        <flowNodeRef>taskActualizarAutorizacionAdmin</flowNodeRef>
       </lane>
       <lane id="laneGerenteArea" name="Gerente de Área Solicitante">
         <flowNodeRef>exclusivegateway1</flowNodeRef>
@@ -29,6 +28,7 @@ execution.setVariable('rqwf_solicitante' , name);]]></activiti:string>
       </lane>
       <lane id="laneDireccionAdmin" name="Dirección Administrativa">
         <flowNodeRef>taskAutorizarRequisicion</flowNodeRef>
+        <flowNodeRef>taskActualizarAutorizacionAdmin</flowNodeRef>
       </lane>
       <lane id="laneDireccionControloria" name="Dirección Contraloría">
         <flowNodeRef>taskAutorizarRequisicionContraloria</flowNodeRef>
@@ -52,7 +52,17 @@ execution.setVariable('rqwf_solicitante' , name);]]></activiti:string>
         <flowNodeRef>taskNotificarAutorizacionSolicitante</flowNodeRef>
       </lane>
     </laneSet>
-    <startEvent id="startRequisicion" name="Iniciar Solicitud de Personal" activiti:formKey="rqwf:crearSolicitud"></startEvent>
+    <startEvent id="startRequisicion" name="Iniciar Solicitud de Personal" activiti:formKey="rqwf:crearSolicitud">
+      <extensionElements>
+        <activiti:executionListener event="end" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
+          <activiti:field name="script">
+            <activiti:string><![CDATA[logger.debug("Finalizando evento :::" + rqwf_puesto);
+execution.setVariable('bpm_comment' , rqwf_caracteristicasCandidato);
+execution.setVariable('bpm_workflowDescription' , rqwf_puesto);]]></activiti:string>
+          </activiti:field>
+        </activiti:executionListener>
+      </extensionElements>
+    </startEvent>
     <serviceTask id="taskCrearSolicitud" name="Crear Solicitud" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
       <extensionElements>
         <activiti:field name="script">
@@ -108,9 +118,11 @@ var solicitud = crearSolicitudRequisicion(rqwf_solicitante,
 execution.setVariable( 'rqwf_solicitudFolio', solicitud);
 
 var division = execution.getVariable('rqwf_division');
-var group = 'RECURSOS_HUMANOS_'+division;
-logger.debug("Asignando al grupo :" + group);
-execution.setVariable('rqwf_areaRh' , group);]]></activiti:string>
+var group = 'GROUP_RECURSOS_HUMANOS_'+division;
+
+var replacedGroup = group.replace(/\s/g, "_");
+logger.debug("Asignando al grupo :" + replacedGroup);
+execution.setVariable('rqwf_areaRh' , replacedGroup);]]></activiti:string>
         </activiti:field>
         <activiti:field name="runAs">
           <activiti:string><![CDATA[admin]]></activiti:string>
@@ -121,13 +133,12 @@ execution.setVariable('rqwf_areaRh' , group);]]></activiti:string>
       <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string><![CDATA[logger.debug("Asignado variables-" + bpm_comment);
-logger.debug('Puesto solicitado' + bpm_workflowDescription);
+            <activiti:string><![CDATA[logger.debug("Asignado variables-" );
+logger.debug('Puesto solicitado' +rqwf_puesto);
 logger.debug('Numero de puestos solicitado' + rqwf_numPuestos);
 logger.debug('Idioma ...' + rqwf_otroIdioma);
 
-execution.setVariable('rqwf_caracteristicasCandidato' , bpm_comment);
-execution.setVariable('rqwf_puesto' , bpm_workflowDescription);]]></activiti:string>
+]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -144,10 +155,14 @@ execution.setVariable('rqwf_puesto' , bpm_workflowDescription);]]></activiti:str
 
 execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
 execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
-execution.setVariable('rqwf_autorizador', person.properties.userName);
+var nameAutorizador =  person.properties.firstName + ' '  + person.properties.lastName;
+execution.setVariable('rqwf_autorizador',  nameAutorizador);
+task.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));
 
 execution.setVariable('rqwf_fechaAutAdmin', new java.util.Date());
-execution.setVariable('rqwf_nombreAdmin',person.properties.userName);]]></activiti:string>
+execution.setVariable('rqwf_nombreAdmin',nameAutorizador);
+
+]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -162,10 +177,12 @@ execution.setVariable('rqwf_nombreAdmin',person.properties.userName);]]></activi
                         }
 execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
 execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
-execution.setVariable('rqwf_autorizador', person.properties.userName);
+var nameAutorizador =  person.properties.firstName + ' '  + person.properties.lastName;
+execution.setVariable('rqwf_autorizador',  nameAutorizador);
 
 execution.setVariable('rqwf_fechaAutFinanzas', new java.util.Date());
-execution.setVariable('rqwf_nombreFinanzas', person.properties.userName);]]></activiti:string>
+execution.setVariable('rqwf_nombreFinanzas', nameAutorizador);
+execution.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -179,9 +196,10 @@ execution.setVariable('rqwf_nombreFinanzas', person.properties.userName);]]></ac
           <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
           //var mail = actions.create("mail");
 //mail.execute(bpm_package);
-logger.error('Enviando correo de creación de solicitud ');
-
-sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', '', '', bpm_comment, initiator.properties.email, 'Nueva solicitud de requisición de personal.', rqwf_areaRh);]]></activiti:string>
+logger.error('Enviando correo de creación de solicitud ' + rqwf_areaRh);
+logger.debug('Area de RH ::. ' + execution.getVariable('rqwf_areaRh'));
+sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', '', '', bpm_comment, initiator.properties.email, 'Nueva solicitud de requisición de personal.', rqwf_areaRh);
+sendMailToEndUser(bpm_package, 'Nueva solicitud de requisición', '', '', '', initiator.properties.email, 'Nueva solicitud de requisición de personal.')]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -191,7 +209,8 @@ sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', '', ''
           <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
           //var mail = actions.create("mail");
 //mail.execute(bpm_package);
-logger.error('Enviando correo de autorizacion de solicitud ');
+logger.error('Enviando correo de autorizacion de solicitud '+rqwf_areaRh);
+logger.debug('Area de RH ::. ' + execution.getVariable('rqwf_areaRh'));
 sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal autorizada.',rqwf_areaRh);]]></activiti:string>
         </activiti:field>
       </extensionElements>
@@ -211,7 +230,9 @@ logger.debug('Nivel de Tabulador ::::' +  task.getVariable('rqwf_sueldoEquidadIn
 execution.setVariable('rqwf_nivelTabulador' , nivelTabulador);
 execution.setVariable('rqwf_rangoMinimo' , task.getVariable('rqwf_rangoMinimo'));
 execution.setVariable('rqwf_rangoMaximo' , task.getVariable('rqwf_rangoMaximo'));
-execution.setVariable('rqwf_sueldoEquidadInterna' , task.getVariable('rqwf_sueldoEquidadInterna'));]]></activiti:string>
+execution.setVariable('rqwf_sueldoEquidadInterna' , task.getVariable('rqwf_sueldoEquidadInterna'));
+
+execution.setVariable('rqwf_voborh' , person);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="mx.com.gp.stickets.listeners.AsignacionSolicitudRequisicion"></activiti:taskListener>
@@ -226,13 +247,18 @@ execution.setVariable('rqwf_sueldoEquidadInterna' , task.getVariable('rqwf_sueld
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[logger.debug(" Outcome ::" + task.getVariable('rqwf_outcomeAutorizacion'));
+task.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));
+execution.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));
 
 execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
 execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
-execution.setVariable('rqwf_autorizador', person.properties.userName);
+var nameAutorizador =  person.properties.firstName + ' '  + person.properties.lastName;
+execution.setVariable('rqwf_autorizador', nameAutorizador);
 
-execution.setVariable('rqwf_fechaAutSolicitante', new java.util.Date());
-execution.setVariable('rqwf_nombreSolicitante', person.properties.userName);]]></activiti:string>
+
+execution.setVariable('rqwf_fechaAutGerente', new java.util.Date());
+execution.setVariable('rqwf_nombreGerente', nameAutorizador);
+]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -253,10 +279,15 @@ execution.setVariable('rqwf_nombreSolicitante', person.properties.userName);]]><
 
 execution.setVariable('rqwf_outcomeAutorizacion', task.getVariable('rqwf_outcomeAutorizacion'));
 execution.setVariable('rqwf_comentarios', task.getVariable('rqwf_comentarios'));
-execution.setVariable('rqwf_autorizador', person.properties.userName);
+var nameAutorizador =  person.properties.firstName + ' '  + person.properties.lastName;
+execution.setVariable('rqwf_autorizador', nameAutorizador);
 
 execution.setVariable('rqwf_fechaAutContraloria', new java.util.Date());
-execution.setVariable('rqwf_nombreContraloria',person.properties.userName);]]></activiti:string>
+execution.setVariable('rqwf_nombreContraloria', nameAutorizador);
+task.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));
+
+
+]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -274,7 +305,8 @@ execution.setVariable('rqwf_nombreContraloria',person.properties.userName);]]></
           <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
           //var mail = actions.create("mail");
 //mail.execute(bpm_package);
-logger.error('Enviando correo de autorizacion de solicitud ');
+logger.error('Enviando correo de autorizacion de solicitud '+rqwf_areaRh);
+logger.debug('Area de RH ::. ' + execution.getVariable('rqwf_areaRh'));
 sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.', rqwf_areaRh);]]></activiti:string>
         </activiti:field>
       </extensionElements>
@@ -296,8 +328,13 @@ sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada'
 
 logger.debug('Actulización de tabulador ...' + rqwf_solicitudFolio);
 
-actualizarTabulador(rqwf_solicitudFolio, rqwf_nivelTabulador, rqwf_rangoMinimo, rqwf_rangoMaximo,rqwf_sueldoEquidadInterna);
+actualizarTabulador(rqwf_solicitudFolio, rqwf_nivelTabulador, rqwf_rangoMinimo, rqwf_rangoMaximo,rqwf_sueldoEquidadInterna, rqwf_voborh);
 
+
+ var gerenteNode =  people.getPerson(rqwf_gerenteArea) ;
+  logger.log("Gerente detail Node ::::"+ gerenteNode.properties.userName);
+
+execution.setVariable('rqwf_gerenteArea' , gerenteNode.properties.userName);
 logger.debug('Gerente asignado::' + rqwf_gerenteArea);]]></activiti:string>
         </activiti:field>
         <activiti:field name="runAs">
@@ -313,7 +350,7 @@ logger.debug('Gerente asignado::' + rqwf_gerenteArea);]]></activiti:string>
 
 logger.debug('Actualizando la autorizacion ..' + rqwf_comentarios + ' ----- ' + rqwf_outcomeAutorizacion + ' autorizarod ::' + rqwf_autorizador);
 
-actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador , 'SOLICITANTE' );
+actualizarAutorizacion(rqwf_solicitudFolio, rqwf_outcomeAutorizacion,rqwf_comentarios,rqwf_autorizador , 'GERENTE' );
 
 execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
         </activiti:field>
