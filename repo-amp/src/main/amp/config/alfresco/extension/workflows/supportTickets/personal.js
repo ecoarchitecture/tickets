@@ -5,6 +5,15 @@ var site = siteService.getSite('recursos-humanos-site').node.childByNamePath('do
 
 
 
+function mostrarValorBoolean( value ){
+var str = 'Si';
+
+if (!value){
+	str = 'No';
+}
+	return str;
+}
+
 /**
  *
  * @param ticketEquipment
@@ -40,12 +49,12 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 	values['centroCostos'] =    	ticketOdt.properties['gp:centroCostos'];
 	values['nombreJefeInmediato'] =    	ticketOdt.properties['gp:nombreJefeInmediato'];
 	
-	values['isNuevaCreacion'] =    	ticketOdt.properties['gp:isNuevaCreacion'];
-	values['isSustitucion'] =    	ticketOdt.properties['gp:isSustitucion'];
-	values['isIncapacidad'] =    	ticketOdt.properties['gp:isIncapacidad'];
-	values['isPromocion'] =    	ticketOdt.properties['gp:isPromocion'];
-	values['isCambio'] =    	ticketOdt.properties['gp:isCambio'];
-	values['isApoyo'] =    	ticketOdt.properties['gp:isApoyo'];
+	values['isNuevaCreacion'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isNuevaCreacion']);
+	values['isSustitucion'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isSustitucion']);
+	values['isIncapacidad'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isIncapacidad']);
+	values['isPromocion'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isPromocion']);
+	values['isCambio'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isCambio']);
+	values['isApoyo'] =    mostrarValorBoolean(ticketOdt.properties['gp:isApoyo']);
 	
 	
 	logger.debug("Campo ::::" + ticketOdt.properties['gp:sustituyeA']);
@@ -67,8 +76,8 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 	
 	
 	
-	values['isTiempoIndefinido'] =    	ticketOdt.properties['gp:isTiempoIndefinido'];
-	values['isTemporal'] =    	ticketOdt.properties['gp:isTemporal'];
+	values['isTiempoIndefinido'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isTiempoIndefinido']);
+	values['isTemporal'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isTemporal']);
 	
 	if(ticketOdt.properties['gp:tiempoTemporal'] != null){
 		values['tiempoTemporal'] =    	ticketOdt.properties['gp:tiempoTemporal'];
@@ -76,7 +85,7 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 		values['tiempoTemporal'] =  '';
 	}
 	
-	values['isSupervisaPersonal'] =    	ticketOdt.properties['gp:isSupervisaPersonal'];
+	values['isSupervisaPersonal'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isSupervisaPersonal']);
 	
 	if(ticketOdt.properties['gp:numSupervisaPersonal'] != null){
 		values['numSupervisaPersonal'] =    	ticketOdt.properties['gp:numSupervisaPersonal'];
@@ -88,12 +97,12 @@ function createContentFileSolicitudRequisicion( ticketOdt){
 	values['estadoCivil'] =    	ticketOdt.properties['gp:estadoCivil'];
 	values['edadMinima'] =    	ticketOdt.properties['gp:edadMinima'];
 	values['edadMaximo'] =    	ticketOdt.properties['gp:edadMaximo'];
-	values['isRequiereViajar'] =    	ticketOdt.properties['gp:isRequiereViajar'];
-	values['isFrecuenteViajar'] =    	ticketOdt.properties['gp:isFrecuenteViajar'];
-	values['isEventualViajar'] =    	ticketOdt.properties['gp:isEventualViajar'];
+	values['isRequiereViajar'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isRequiereViajar']);
+	values['isFrecuenteViajar'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isFrecuenteViajar']);
+	values['isEventualViajar'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isEventualViajar']);
 	values['escolaridad'] =    	ticketOdt.properties['gp:escolaridad'];
 	values['especialidad'] =    	ticketOdt.properties['gp:especialidad'];
-	values['isExperienciaLaboral'] =    	ticketOdt.properties['gp:isExperienciaLaboral'];
+	values['isExperienciaLaboral'] =    	mostrarValorBoolean(ticketOdt.properties['gp:isExperienciaLaboral']);
 	values['aniosExperienciaLaboral'] =    	ticketOdt.properties['gp:aniosExperienciaLaboral'];
 	values['idioma'] =    	ticketOdt.properties['gp:idioma'];
 	values['porcentajeIdiomaHablar'] =    	ticketOdt.properties['gp:porcentajeIdiomaHablar'];
@@ -595,7 +604,7 @@ function getNewFolio()
  * @param email
  * @param subject
  */
-function sendMailToEndUser(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email, subject)
+function sendMailToEndUser(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email, subject, pooled)
 {
 	logger.debug('email '+email);
 	logger.debug('wfFolio '+wfFolio);
@@ -609,12 +618,12 @@ function sendMailToEndUser(wfPackage, wfTitle, wfText, wfFolio, wfPuesto, email,
 	var wfMail = new Object();
 	wfMail.args = new Object();
 
-	wfMail.args.workflowTasks = true;
-  wfMail.args.workflowPooled = true;
+	wfMail.args.workflowTasks = false;
+  wfMail.args.workflowPooled = pooled;
   wfMail.args.workflowTitle = wfPuesto;
-  wfMail.args.workflowDescription = 'Se ha creado la Solicitud de requisición de personal';
+  wfMail.args.workflowDescription = wfText;
   wfMail.args.workflowDueDate = new Date();
-
+  wfMail.args.solicitudFolio = wfFolio;
   wfMail.args.workflowDocuments = wfPackage.children;
 
 	if (email != null || email != ''){
@@ -666,9 +675,9 @@ function sendMailToRecursosHumanos(wfPackage, wfTitle, wfText, wfFolio, wfPuesto
 	wfMail.args.workflowTasks = true;
   wfMail.args.workflowPooled = false;
   wfMail.args.workflowTitle = wfPuesto;
-  wfMail.args.workflowDescription = 'Solicitud de requisición de personal';
+  wfMail.args.workflowDescription = wfText;
   wfMail.args.workflowDueDate = new Date();
-
+  wfMail.args.solicitudFolio = wfFolio;
   wfMail.args.workflowDocuments = wfPackage.children;
   
 //  var str = 'GROUP_'+rqwf_areaRh;
@@ -736,7 +745,7 @@ function sendMailAutorizacionGerente(wfPackage, wfTitle, wfText, wfFolio, wfPues
   wfMail.args.workflowTitle = wfPuesto;
   wfMail.args.workflowDescription = 'Autorización de requisición de personal';
   wfMail.args.workflowDueDate = new Date();
-
+  wfMail.args.solicitudFolio = wfFolio;
   wfMail.args.workflowDocuments = wfPackage.children;
   
   
@@ -780,9 +789,9 @@ function sendMailAutorizacionPendiente(wfPackage, wfTitle, wfText, wfFolio, wfPu
 	wfMail.args.workflowTasks = true;
   wfMail.args.workflowPooled = false;
   wfMail.args.workflowTitle = wfPuesto;
-  wfMail.args.workflowDescription = 'Autorización de requisición de personal';
+  wfMail.args.workflowDescription = 'Se requiere de su autorización de Requisición de Personal';
   wfMail.args.workflowDueDate = new Date();
-
+  wfMail.args.solicitudFolio = wfFolio;
   wfMail.args.workflowDocuments = wfPackage.children;
   
   

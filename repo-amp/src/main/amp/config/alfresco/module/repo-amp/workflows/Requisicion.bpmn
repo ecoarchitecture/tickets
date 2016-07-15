@@ -18,6 +18,8 @@ execution.setVariable('rqwf_solicitante' , name);]]></activiti:string>
         <flowNodeRef>startRequisicion</flowNodeRef>
         <flowNodeRef>taskCrearSolicitud</flowNodeRef>
         <flowNodeRef>alfrescoMailtask1</flowNodeRef>
+        <flowNodeRef>taskNotificarRechazoPorGerente</flowNodeRef>
+        <flowNodeRef>endevent3</flowNodeRef>
       </lane>
       <lane id="laneGerenteArea" name="Gerente de Área Solicitante">
         <flowNodeRef>exclusivegateway1</flowNodeRef>
@@ -136,9 +138,7 @@ execution.setVariable('rqwf_areaRh' , replacedGroup);]]></activiti:string>
             <activiti:string><![CDATA[logger.debug("Asignado variables-" );
 logger.debug('Puesto solicitado' +rqwf_puesto);
 logger.debug('Numero de puestos solicitado' + rqwf_numPuestos);
-logger.debug('Idioma ...' + rqwf_otroIdioma);
-
-]]></activiti:string>
+logger.debug('Idioma ...' + rqwf_otroIdioma);]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -160,9 +160,7 @@ execution.setVariable('rqwf_autorizador',  nameAutorizador);
 task.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));
 
 execution.setVariable('rqwf_fechaAutAdmin', new java.util.Date());
-execution.setVariable('rqwf_nombreAdmin',nameAutorizador);
-
-]]></activiti:string>
+execution.setVariable('rqwf_nombreAdmin',nameAutorizador);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -198,8 +196,8 @@ execution.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));]]>
 //mail.execute(bpm_package);
 logger.error('Enviando correo de creación de solicitud ' + rqwf_areaRh);
 logger.debug('Area de RH ::. ' + execution.getVariable('rqwf_areaRh'));
-sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', '', '', bpm_comment, initiator.properties.email, 'Nueva solicitud de requisición de personal.', rqwf_areaRh);
-sendMailToEndUser(bpm_package, 'Nueva solicitud de requisición', '', '', '', initiator.properties.email, 'Nueva solicitud de requisición de personal.')]]></activiti:string>
+sendMailToRecursosHumanos(bpm_package, 'Nueva solicitud de requisición', 'Se ha creado una nueva solicitud de Requisición de Personal', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Nueva solicitud de requisición de personal.', rqwf_areaRh);
+sendMailToEndUser(bpm_package, 'Nueva solicitud de requisición', 'La solicitud de requisición de personal se ha creado.', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Nueva solicitud de requisición de personal.', true)]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -211,7 +209,8 @@ sendMailToEndUser(bpm_package, 'Nueva solicitud de requisición', '', '', '', in
 //mail.execute(bpm_package);
 logger.error('Enviando correo de autorizacion de solicitud '+rqwf_areaRh);
 logger.debug('Area de RH ::. ' + execution.getVariable('rqwf_areaRh'));
-sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal autorizada.',rqwf_areaRh);]]></activiti:string>
+sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición autorizada', 'Iniciar Reclutamiento de Personal', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Solicitud de requisición de personal autorizada.',rqwf_areaRh);
+sendMailToEndUser(bpm_package, 'Solicitud de requisición autorizada', 'Solicitud de Requisición de personal Autorizada', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Solicitud de requisición de personal autorizada.', false)]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -238,9 +237,6 @@ execution.setVariable('rqwf_voborh' , person);]]></activiti:string>
         <activiti:taskListener event="complete" class="mx.com.gp.stickets.listeners.AsignacionSolicitudRequisicion"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <sequenceFlow id="flow26" sourceRef="exclusivegateway1" targetRef="startRequisicion">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${rqwf_outcomeAutorizacion == "Rechazar"}]]></conditionExpression>
-    </sequenceFlow>
     <sequenceFlow id="flow28" sourceRef="alfrescoMailtask1" targetRef="usertask1"></sequenceFlow>
     <userTask id="taskAutorizarSolicitud" name="Autorizar Solicitud" activiti:candidateUsers="${rqwf_gerenteArea}" activiti:formKey="rqwf:autorizarSolicitud">
       <extensionElements>
@@ -257,8 +253,7 @@ execution.setVariable('rqwf_autorizador', nameAutorizador);
 
 
 execution.setVariable('rqwf_fechaAutGerente', new java.util.Date());
-execution.setVariable('rqwf_nombreGerente', nameAutorizador);
-]]></activiti:string>
+execution.setVariable('rqwf_nombreGerente', nameAutorizador);]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -284,10 +279,7 @@ execution.setVariable('rqwf_autorizador', nameAutorizador);
 
 execution.setVariable('rqwf_fechaAutContraloria', new java.util.Date());
 execution.setVariable('rqwf_nombreContraloria', nameAutorizador);
-task.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));
-
-
-]]></activiti:string>
+task.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -307,7 +299,8 @@ task.setVariable('bpm_comment' ,  task.getVariable('rqwf_comentarios'));
 //mail.execute(bpm_package);
 logger.error('Enviando correo de autorizacion de solicitud '+rqwf_areaRh);
 logger.debug('Area de RH ::. ' + execution.getVariable('rqwf_areaRh'));
-sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada', '', '', bpm_comment, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.', rqwf_areaRh);]]></activiti:string>
+sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada', 'Se ha rechazado la solicitud de requisición.', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.', rqwf_areaRh);
+sendMailToEndUser(bpm_package, 'Solicitud de requisición NO autorizada', 'Solicitud de requisición NO autorizada', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.', false);]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -367,7 +360,7 @@ execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
           //var mail = actions.create("mail");
 //mail.execute(bpm_package);
 logger.error('Enviando correo de autorizacion de solicitud ');
-sendMailAutorizacionGerente(bpm_package, 'Autorización de Solicitud de Requisión de Personal','',rqwf_solicitudFolio, bpm_comment, 'Se requiere autorizar la solicitud de requisición de personal', rqwf_gerenteArea);]]></activiti:string>
+sendMailAutorizacionGerente(bpm_package, 'Autorización de Solicitud de Requisión de Personal',rqwf_solicitudFolio,rqwf_solicitudFolio, rqwf_puesto, 'Se requiere autorizar la solicitud de requisición de personal', rqwf_gerenteArea);]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -379,7 +372,7 @@ sendMailAutorizacionGerente(bpm_package, 'Autorización de Solicitud de Requisi�
           //var mail = actions.create("mail");
 //mail.execute(bpm_package);
 logger.error('Enviando correo de autorizacion de solicitud ');
-sendMailAutorizacionPendiente(bpm_package, 'Autorización de Solicitud de Requisión de Personal','',rqwf_solicitudFolio, bpm_comment, 'Se requiere autorizar la solicitud de requisición de personal', 'GROUP_DIRECTIVA');]]></activiti:string>
+sendMailAutorizacionPendiente(bpm_package, 'Autorización de Solicitud de Requisión de Personal','',rqwf_solicitudFolio, rqwf_puesto, 'Se requiere autorizar la solicitud de requisición de personal', 'GROUP_DIRECTIVA');]]></activiti:string>
         </activiti:field>
       </extensionElements>
     </serviceTask>
@@ -435,6 +428,24 @@ execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
       </extensionElements>
     </serviceTask>
     <sequenceFlow id="flow47" sourceRef="taskAutorizarFinanzas" targetRef="taskActualizarAutorizacionFinanzas"></sequenceFlow>
+    
+    <serviceTask id="taskNotificarRechazoPorGerente" name="Notificar Solicitud Rechazada por Gerente" activiti:async="true" activiti:class="org.alfresco.repo.workflow.activiti.script.AlfrescoScriptDelegate">
+      <extensionElements>
+        <activiti:field name="script">
+          <activiti:string><![CDATA[<import resource="classpath:alfresco/extension/workflows/supportTickets/personal.js">
+          //var mail = actions.create("mail");
+//mail.execute(bpm_package);
+logger.error('Enviando correo de RECHAZO de solicitud '+rqwf_areaRh);
+logger.debug('Area de RH ::. ' + execution.getVariable('rqwf_areaRh'));
+sendMailToRecursosHumanos(bpm_package, 'Solicitud de requisición NO autorizada', 'Solicitud de requisición NO autorizada', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.', rqwf_areaRh);
+sendMailToEndUser(bpm_package, 'Solicitud de requisición NO autorizada', 'Solicitud de requisición NO autorizada', rqwf_solicitudFolio, rqwf_puesto, initiator.properties.email, 'Solicitud de requisición de personal NO autorizada.', false);]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    
+    <endEvent id="endevent3" name="End"></endEvent>
+    <sequenceFlow id="flow48" sourceRef="taskNotificarRechazoPorGerente" targetRef="endevent3"></sequenceFlow>
+    <sequenceFlow id="flow49" sourceRef="exclusivegateway1" targetRef="taskNotificarRechazoPorGerente"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_Collaboration">
     <bpmndi:BPMNPlane bpmnElement="Collaboration" id="BPMNPlane_Collaboration">
@@ -531,6 +542,12 @@ execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
       <bpmndi:BPMNShape bpmnElement="taskActualizarAutorizacionFinanzas" id="BPMNShape_taskActualizarAutorizacionFinanzas">
         <omgdc:Bounds height="75.0" width="113.0" x="1240.0" y="1050.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskNotificarRechazoPorGerente" id="BPMNShape_taskNotificarRechazoPorGerente">
+        <omgdc:Bounds height="75.0" width="115.0" x="1040.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
+        <omgdc:Bounds height="35.0" width="35.0" x="1210.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="145.0" y="117.0"></omgdi:waypoint>
         <omgdi:waypoint x="250.0" y="117.0"></omgdi:waypoint>
@@ -546,12 +563,6 @@ execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
       <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
         <omgdi:waypoint x="1785.0" y="1334.0"></omgdi:waypoint>
         <omgdi:waypoint x="1870.0" y="1334.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow26" id="BPMNEdge_flow26">
-        <omgdi:waypoint x="1100.0" y="336.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1100.0" y="28.0"></omgdi:waypoint>
-        <omgdi:waypoint x="125.0" y="28.0"></omgdi:waypoint>
-        <omgdi:waypoint x="127.0" y="100.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow28" id="BPMNEdge_flow28">
         <omgdi:waypoint x="521.0" y="117.0"></omgdi:waypoint>
@@ -645,6 +656,14 @@ execution.setVariable('rqwf_comentarios', '');]]></activiti:string>
       <bpmndi:BPMNEdge bpmnElement="flow47" id="BPMNEdge_flow47">
         <omgdi:waypoint x="1296.0" y="1027.0"></omgdi:waypoint>
         <omgdi:waypoint x="1296.0" y="1050.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow48" id="BPMNEdge_flow48">
+        <omgdi:waypoint x="1155.0" y="127.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1210.0" y="127.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow49" id="BPMNEdge_flow49">
+        <omgdi:waypoint x="1100.0" y="336.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1097.0" y="165.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
